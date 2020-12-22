@@ -31,7 +31,7 @@ import org.matsim.core.config.ReflectiveConfigGroup;
  */
 
 public class PtExtensionsConfigGroup extends ReflectiveConfigGroup {
-	public static final String GROUP_NAME = "berlinExperimental" ;
+	public static final String GROUP_NAME = "ptExtensions" ;
 
     private static final String POPULATION_DOWNSAMPLE_FACTOR = "populationDownsampleFactor";
     private static final String TAG_DRT_LINKS_BUFFER_AROUND_SERVICE_AREA_SHP = "tagDrtLinksBufferAroundServiceAreaShp";
