@@ -55,7 +55,7 @@ public class IntermodalTripFareCompensatorPerTrip implements PersonDepartureEven
 	IntermodalTripFareCompensatorPerTrip(IntermodalTripFareCompensatorConfigGroup intermodalFareConfigGroup) {
 		this.compensationMoney = intermodalFareConfigGroup.getCompensationMoneyPerTrip();
 		this.compensationScore = intermodalFareConfigGroup.getCompensationScorePerTrip();
-		this.drtModes = intermodalFareConfigGroup.getDrtModes();
+		this.drtModes = intermodalFareConfigGroup.getNonPtModes();
 		this.ptModes = intermodalFareConfigGroup.getPtModes();
 	}
 	

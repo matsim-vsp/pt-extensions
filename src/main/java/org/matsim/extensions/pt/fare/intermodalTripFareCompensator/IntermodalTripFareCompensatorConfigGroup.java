@@ -35,7 +35,7 @@ public class IntermodalTripFareCompensatorConfigGroup extends ReflectiveConfigGr
 		public static final String COMPENSATION_SCORE_PER_TRIP = "compensationScorePerTrip";
 		public static final String COMPENSATION_SCORE_PER_DAY = "compensationScorePerDay";
 	    public static final String COMPENSATION_CONDITION= "compensationCondition";
-	    public static final String DRT_MODES = "drtModes";
+	    public static final String NON_PT_MODES = "nonPtModes";
 	    public static final String PT_MODES = "ptModes";
 
 	    private double compensationMoneyPerDay = 0.0;
@@ -49,7 +49,7 @@ public class IntermodalTripFareCompensatorConfigGroup extends ReflectiveConfigGr
 	     * IntermodalTripFareCompensatorConfigGroup (e.g. in regular matsim shutdown after last iteration)
 	     * leads to NullPointerExceptions :-(
 	     */
-	    private ImmutableSet<String> drtModes = ImmutableSet.of(TransportMode.drt); 
+	    private ImmutableSet<String> nonPtModes = ImmutableSet.of(TransportMode.drt);
 	    private ImmutableSet<String> ptModes = ImmutableSet.of(TransportMode.pt); // same
 
 	    public enum CompensationCondition {
@@ -69,8 +69,8 @@ public class IntermodalTripFareCompensatorConfigGroup extends ReflectiveConfigGr
 			map.put(COMPENSATION_SCORE_PER_DAY, "Compensation score per Day, i.e. only paid once per day no matter the number of trips. Not implemented yet for compensationCondition==PtModeUsedInSameTrip (compensation = refund score paid to the customer = positive value)");
 	        map.put(COMPENSATION_CONDITION, "Condition which governs which agents are compensated. Options: "
 				+ CompensationCondition.PtModeUsedInSameTrip + ", " + CompensationCondition.PtModeUsedAnywhereInTheDay);
-	        map.put(DRT_MODES, "drt modes for which the compensation applies (comma separated list).");
-	        map.put(PT_MODES, "pt modes for which the compensation applies (comma separated list).");
+	        map.put(NON_PT_MODES, "non pt modes for which the compensation applies (comma separated list).");
+	        map.put(PT_MODES, "pt modes for which the compensation applies (comma separated list). Should also work for other modes than pt, but if pt is to be combined it has to be inserted here.");
 	        return map;
 	    }
 
@@ -124,22 +124,22 @@ public class IntermodalTripFareCompensatorConfigGroup extends ReflectiveConfigGr
 	        this.compensationCondition = compensationCondition;
 	    }
 	    
-		@StringGetter(DRT_MODES)
-		public String getDrtModesAsString() {
-			return String.join(",", drtModes);
+		@StringGetter(NON_PT_MODES)
+		public String getNonPtModesAsString() {
+			return String.join(",", nonPtModes);
 		}
 
-		public ImmutableSet<String> getDrtModes() {
-			return drtModes;
+		public ImmutableSet<String> getNonPtModes() {
+			return nonPtModes;
 		}
 
-		@StringSetter(DRT_MODES)
-		public void setDrtModesAsString(String drtModesString) {
-			this.drtModes = ImmutableSet.copyOf(StringUtils.explode(drtModesString, ','));
+		@StringSetter(NON_PT_MODES)
+		public void setNonPtModesAsString(String nonPtModesString) {
+			this.nonPtModes = ImmutableSet.copyOf(StringUtils.explode(nonPtModesString, ','));
 		}
 
-		public void setDrtModes(ImmutableSet<String> drtModes) {
-			this.drtModes = drtModes;
+		public void setNonPtModes(ImmutableSet<String> nonPtModes) {
+			this.nonPtModes = nonPtModes;
 		}
 	
 		@StringGetter(PT_MODES)

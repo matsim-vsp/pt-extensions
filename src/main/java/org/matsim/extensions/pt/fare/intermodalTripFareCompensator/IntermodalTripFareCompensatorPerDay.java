@@ -62,7 +62,7 @@ public class IntermodalTripFareCompensatorPerDay implements PersonDepartureEvent
 		this.compensationMoneyPerTrip = intermodalFareConfigGroup.getCompensationMoneyPerTrip();
 		this.compensationScorePerDay = intermodalFareConfigGroup.getCompensationScorePerDay();
 		this.compensationScorePerTrip = intermodalFareConfigGroup.getCompensationScorePerTrip();
-		this.drtModes = intermodalFareConfigGroup.getDrtModes();
+		this.drtModes = intermodalFareConfigGroup.getNonPtModes();
 		this.ptModes = intermodalFareConfigGroup.getPtModes();
 	}
 

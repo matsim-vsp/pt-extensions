@@ -63,7 +63,7 @@ public class IntermodalTripFareCompensatorsTest {
 
         IntermodalTripFareCompensatorConfigGroup compensatorConfig = new IntermodalTripFareCompensatorConfigGroup();
         compensatorConfig.setCompensationCondition(CompensationCondition.PtModeUsedAnywhereInTheDay);
-        compensatorConfig.setDrtModesAsString(TransportMode.drt + ",drt2");
+        compensatorConfig.setNonPtModesAsString(TransportMode.drt + ",drt2");
         compensatorConfig.setPtModesAsString(TransportMode.pt);
         double compensationMoneyPerTrip = 1.0;
         compensatorConfig.setCompensationMoneyPerTrip(compensationMoneyPerTrip);
@@ -125,7 +125,7 @@ public class IntermodalTripFareCompensatorsTest {
 
         IntermodalTripFareCompensatorConfigGroup compensatorConfig = new IntermodalTripFareCompensatorConfigGroup();
         compensatorConfig.setCompensationCondition(CompensationCondition.PtModeUsedInSameTrip);
-        compensatorConfig.setDrtModesAsString(TransportMode.drt + ",drt2");
+        compensatorConfig.setNonPtModesAsString(TransportMode.drt + ",drt2");
         compensatorConfig.setPtModesAsString(TransportMode.pt);
         double compensationMoneyPerTrip = 1.0;
         compensatorConfig.setCompensationMoneyPerTrip(compensationMoneyPerTrip);
@@ -182,7 +182,7 @@ public class IntermodalTripFareCompensatorsTest {
         
         IntermodalTripFareCompensatorConfigGroup compensatorPerDayConfig = new IntermodalTripFareCompensatorConfigGroup();
         compensatorPerDayConfig.setCompensationCondition(CompensationCondition.PtModeUsedAnywhereInTheDay);
-        compensatorPerDayConfig.setDrtModesAsString(TransportMode.drt + ",drt2");
+        compensatorPerDayConfig.setNonPtModesAsString(TransportMode.drt + ",drt2");
         compensatorPerDayConfig.setPtModesAsString(TransportMode.pt);
         double compensationMoneyPerTripAnywhereInTheDay = 111.0;
         compensatorPerDayConfig.setCompensationMoneyPerTrip(compensationMoneyPerTripAnywhereInTheDay);
@@ -196,7 +196,7 @@ public class IntermodalTripFareCompensatorsTest {
 
         IntermodalTripFareCompensatorConfigGroup compensatorPerTripConfig = new IntermodalTripFareCompensatorConfigGroup();
         compensatorPerTripConfig.setCompensationCondition(CompensationCondition.PtModeUsedInSameTrip);
-        compensatorPerTripConfig.setDrtModesAsString(TransportMode.drt + ",drt2");
+        compensatorPerTripConfig.setNonPtModesAsString(TransportMode.drt + ",drt2");
         compensatorPerTripConfig.setPtModesAsString(TransportMode.pt);
         double compensationMoneyPerTripSameTrip = 1.0;
         compensatorPerTripConfig.setCompensationMoneyPerTrip(compensationMoneyPerTripSameTrip);

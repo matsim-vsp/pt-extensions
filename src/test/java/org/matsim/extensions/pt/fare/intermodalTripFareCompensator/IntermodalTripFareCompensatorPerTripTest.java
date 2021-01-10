@@ -56,7 +56,7 @@ public class IntermodalTripFareCompensatorPerTripTest {
         Config config = ConfigUtils.createConfig();
         
         IntermodalTripFareCompensatorConfigGroup compensatorConfig = new IntermodalTripFareCompensatorConfigGroup();
-        compensatorConfig.setDrtModesAsString(TransportMode.drt + ",drt2");
+        compensatorConfig.setNonPtModesAsString(TransportMode.drt + ",drt2");
         compensatorConfig.setPtModesAsString(TransportMode.pt);
         double compensationMoneyPerTrip = 1.0;
         double compensationScorePerTrip = 2.0;

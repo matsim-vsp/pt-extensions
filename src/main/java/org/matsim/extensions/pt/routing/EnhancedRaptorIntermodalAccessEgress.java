@@ -121,7 +121,7 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
                 
                 // account for intermodal trip fare compensations
                 for (IntermodalTripFareCompensatorConfigGroup compensatorCfg : interModalTripFareCompensatorsCfg.getIntermodalTripFareCompensatorConfigGroups()) {
-                	if (compensatorCfg.getDrtModes().contains(mode) && compensatorCfg.getPtModes().contains(TransportMode.pt)) {
+                	if (compensatorCfg.getNonPtModes().contains(mode) && compensatorCfg.getPtModes().contains(TransportMode.pt)) {
                 		// the following is a compensation, thus positive!
                 		utility += compensatorCfg.getCompensationMoneyPerTrip() * scoringParams.marginalUtilityOfMoney;
 						utility += compensatorCfg.getCompensationScorePerTrip();
