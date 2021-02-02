@@ -8,6 +8,7 @@ import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress;
 import ch.sbb.matsim.routing.pt.raptor.RaptorParameters;
 import ch.sbb.matsim.routing.pt.raptor.RaptorStopFinder;
 import com.google.inject.Inject;
+import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Leg;
@@ -40,11 +41,14 @@ import java.util.Random;
  */
 public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAccessEgress {
 
+	public static final String MARGINAL_UTILITY_OF_MONEY_PERSONAL_FACTOR_ATTRIBUTE_NAME = "marginalUtilityOfMoneyPersonalFactor";
+	private static final Logger log = Logger.getLogger(EnhancedRaptorIntermodalAccessEgress.class);
 	private final ScoringParametersForPerson parametersForPerson;
 	Config config;
 	PtExtensionsConfigGroup ptExtensionsCfg;
 	MultiModeDrtConfigGroup multiModeDrtConfigGroup;
 	IntermodalTripFareCompensatorsConfigGroup interModalTripFareCompensatorsCfg;
+	boolean hasNotShownIsUsingMarginalUtilityOfMoneyFromPersonAttributeYet = true;
 
 	// for randomization per person, per mode, per direction (but same random value for one combination of this per routing request)
 	Id<Person> lastPersonId = Id.createPersonId("");
@@ -67,14 +71,23 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
     public RIntermodalAccessEgress calcIntermodalAccessEgress( final List<? extends PlanElement> legs, RaptorParameters params, Person person,
                                                                RaptorStopFinder.Direction direction) {
 		// maybe nicer using raptor parameters per person ?
-		String subpopulationName = null;
-		if (person.getAttributes() != null) {
-			Object attr = person.getAttributes().getAttribute("subpopulation") ;
-			subpopulationName = attr == null ? null : attr.toString();
-		}
+		ScoringParameters scoringParams;
+		double marginalUtilityOfMoney;
 
-		ScoringParameters scoringParams = this.parametersForPerson.getScoringParameters(person);
-//		ScoringParameterSet scoringParams = config.planCalcScore().getScoringParameters(subpopulationName);
+		scoringParams = this.parametersForPerson.getScoringParameters(person);
+		try {
+			Object attr = person.getAttributes().getAttribute(MARGINAL_UTILITY_OF_MONEY_PERSONAL_FACTOR_ATTRIBUTE_NAME);
+			marginalUtilityOfMoney = attr == null ?
+					scoringParams.marginalUtilityOfMoney : scoringParams.marginalUtilityOfMoney * Double.parseDouble(attr.toString());
+			if (hasNotShownIsUsingMarginalUtilityOfMoneyFromPersonAttributeYet) {
+				log.warn("Using person specific marginal utility of money from person attribute " +
+						MARGINAL_UTILITY_OF_MONEY_PERSONAL_FACTOR_ATTRIBUTE_NAME +
+						" (multiplied with marginalUtilityOfMoney found in ScoringParameters).");
+				hasNotShownIsUsingMarginalUtilityOfMoneyFromPersonAttributeYet = false;
+			}
+		} catch (Exception e) {
+			marginalUtilityOfMoney = scoringParams.marginalUtilityOfMoney;
+		}
 		
         double utility = 0.0;
         double tTime = 0.0;
@@ -91,20 +104,22 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
 							.marginalUtilityOfTraveling_s + (-1) * scoringParams.marginalUtilityOfPerforming_s);
 				}
 				Double distance = ((Leg)pe).getRoute().getDistance();
-				if (distance != null && distance != 0.) {
+				if (distance != 0.) {
 					utility += distance * scoringParams.modeParams.get(mode).marginalUtilityOfDistance_m;
 					utility += distance
 							* scoringParams.modeParams.get(mode).monetaryDistanceCostRate
-							* scoringParams.marginalUtilityOfMoney;
+							* marginalUtilityOfMoney;
 				}
 				utility += scoringParams.modeParams.get(mode).constant;
 
 				// account for drt fares
 				for (DrtConfigGroup drtConfig : multiModeDrtConfigGroup.getModalElements()) {
 					if (drtConfig.getMode().equals(mode)) {
+						// skip this leg if the drt mode has no fare
+						if (drtConfig.getDrtFareParams().isEmpty()) break;
 						DrtFareParams drtFareParams = drtConfig.getDrtFareParams().get();
 						double fare = 0.;
-						if (distance != null && distance != 0.) {
+						if (distance != 0.) {
 							fare += drtFareParams.getDistanceFare_m() * distance;
 						}
 
@@ -115,7 +130,7 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
 
 						fare += drtFareParams.getBasefare();
 						fare = Math.max(fare, drtFareParams.getMinFarePerTrip());
-						utility += -1. * fare * scoringParams.marginalUtilityOfMoney;
+						utility += -1. * fare * marginalUtilityOfMoney;
 					}
                 }
                 
@@ -123,7 +138,7 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
                 for (IntermodalTripFareCompensatorConfigGroup compensatorCfg : interModalTripFareCompensatorsCfg.getIntermodalTripFareCompensatorConfigGroups()) {
                 	if (compensatorCfg.getNonPtModes().contains(mode) && compensatorCfg.getPtModes().contains(TransportMode.pt)) {
                 		// the following is a compensation, thus positive!
-                		utility += compensatorCfg.getCompensationMoneyPerTrip() * scoringParams.marginalUtilityOfMoney;
+                		utility += compensatorCfg.getCompensationMoneyPerTrip() * marginalUtilityOfMoney;
 						utility += compensatorCfg.getCompensationScorePerTrip();
                 	}
                 }
