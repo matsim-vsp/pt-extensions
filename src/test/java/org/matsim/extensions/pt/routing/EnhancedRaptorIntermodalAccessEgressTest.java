@@ -22,17 +22,21 @@ import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress;
 import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress.RIntermodalAccessEgress;
 import ch.sbb.matsim.routing.pt.raptor.RaptorParameters;
 import ch.sbb.matsim.routing.pt.raptor.RaptorStopFinder;
+import com.google.inject.Singleton;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
+import org.matsim.api.core.v01.network.Node;
 import org.matsim.api.core.v01.population.*;
 import org.matsim.contrib.drt.fare.DrtFareParams;
+import org.matsim.contrib.drt.optimizer.insertion.ExtensiveInsertionSearchParams;
 import org.matsim.contrib.drt.routing.DrtRoute;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
 import org.matsim.contrib.drt.run.MultiModeDrtConfigGroup;
@@ -40,19 +44,20 @@ import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
-import org.matsim.core.controler.AbstractModule;
-import org.matsim.core.controler.ControlerDefaultsModule;
-import org.matsim.core.controler.NewControlerModule;
-import org.matsim.core.controler.OutputDirectoryHierarchy;
+import org.matsim.core.controler.*;
 import org.matsim.core.controler.corelisteners.ControlerDefaultCoreListenersModule;
 import org.matsim.core.population.PopulationUtils;
 import org.matsim.core.population.routes.GenericRouteImpl;
 import org.matsim.core.scenario.ScenarioByInstanceModule;
 import org.matsim.core.scenario.ScenarioUtils;
+import org.matsim.core.scoring.functions.ScoringParametersForPerson;
 import org.matsim.testcases.MatsimTestUtils;
+import playground.vsp.scoring.IncomeDependentUtilityOfMoneyPersonScoringParameters;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static playground.vsp.scoring.IncomeDependentUtilityOfMoneyPersonScoringParameters.PERSONAL_INCOME_ATTRIBUTE_NAME;
 
 /**
  * @author vsp-gleich
@@ -348,4 +353,121 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		}
 		Assert.assertEquals("Input legs != output legs!", legs.size(), resultSubpopulationNull.routeParts.size());
 	}
+
+	@Test
+	public final void testIncomeDependentUtilityOfMoneyPersonScoringParameters() {
+		List<PlanElement> legs = new ArrayList<>();
+		RaptorParameters params = null;
+
+		Config config = ConfigUtils.createConfig();
+		config.controler().setOutputDirectory(utils.getOutputDirectory());
+		config.controler().setLastIteration(0);
+		config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
+		Scenario scenario = ScenarioUtils.createScenario(config);
+		Population pop = scenario.getPopulation();
+		PopulationFactory f = pop.getFactory();
+		Person person = f.createPerson(Id.createPersonId("personSubpopulationNull"));
+		person.getAttributes().putAttribute(PERSONAL_INCOME_ATTRIBUTE_NAME, 2000.0);
+		pop.addPerson(person);
+		Plan plan = f.createPlan();
+		Activity homeAct = f.createActivityFromCoord("home", new Coord(1,1));
+		plan.addActivity(homeAct);
+		person.addPlan(plan);
+
+		Person dummyPerson = f.createPerson(Id.createPersonId("personWithHighIncome"));
+		dummyPerson.getAttributes().putAttribute(PERSONAL_INCOME_ATTRIBUTE_NAME, 6000.0);
+		pop.addPerson(dummyPerson);
+		Plan dummyPlan = f.createPlan();
+		Activity homeAct2 = f.createActivityFromCoord("home", new Coord(1,1));
+		dummyPlan.addActivity(homeAct2);
+		dummyPerson.addPlan(dummyPlan);
+
+		Node node1 = scenario.getNetwork().getFactory().createNode(Id.createNodeId("1"), new Coord(0,0));
+		Node node2 = scenario.getNetwork().getFactory().createNode(Id.createNodeId("2"), new Coord(2,2));
+		scenario.getNetwork().addNode(node1);
+		scenario.getNetwork().addNode(node2);
+		scenario.getNetwork().addLink(scenario.getNetwork().getFactory().createLink(Id.createLinkId("1-2"), node1, node2));
+		scenario.getNetwork().addLink(scenario.getNetwork().getFactory().createLink(Id.createLinkId("2-1"), node2, node1));
+
+		// daily constants / rates are ignored, but set them anyway (to see whether they are used by error)
+		PlanCalcScoreConfigGroup scoreCfg = config.planCalcScore();
+		scoreCfg.setMarginalUtilityOfMoney(1.0);
+		scoreCfg.setPerforming_utils_hr(0.00011 * 3600.0);
+		scoreCfg.setMarginalUtlOfWaitingPt_utils_hr(1d); // completely irrelevant, but avoids NullPointerExceptions
+		ModeParams drtParams = scoreCfg.getOrCreateModeParams(TransportMode.drt);
+		drtParams.setConstant(-2.1);
+		drtParams.setDailyMonetaryConstant(-2.2);
+		drtParams.setDailyUtilityConstant(-2.3);
+		drtParams.setMarginalUtilityOfDistance(-0.00024);
+		drtParams.setMarginalUtilityOfTraveling(-0.00025 * 3600.0);
+		drtParams.setMonetaryDistanceRate(-0.00026);
+
+		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
+		drtConfigGroup.setMode(TransportMode.drt);
+		DrtFareParams drtFareParams = new DrtFareParams();
+		drtFareParams.setBasefare(1.0);
+		drtFareParams.setDailySubscriptionFee(10.0);
+		drtFareParams.setMinFarePerTrip(2.0);
+		drtFareParams.setDistanceFare_m(0.0002);
+		drtFareParams.setTimeFare_h(0.0003 * 3600);
+		drtConfigGroup.addParameterSet(drtFareParams);
+		// Make DrtConfigGroup.checkConsistency happy
+		drtConfigGroup.setMaxWaitTime(900);
+		drtConfigGroup.setStopDuration(60);
+		drtConfigGroup.setMaxTravelTimeAlpha(1.3);
+		drtConfigGroup.setMaxTravelTimeBeta(300);
+		drtConfigGroup.addDrtInsertionSearchParams(new ExtensiveInsertionSearchParams());
+
+		MultiModeDrtConfigGroup multiModeDrtConfigGroup = ConfigUtils.addOrGetModule(config,
+				MultiModeDrtConfigGroup.class);
+		multiModeDrtConfigGroup.addParameterSet(drtConfigGroup);
+
+		/*
+		 * Creating an injector with the matsim infrastructure and
+		 * bind(ScoringParametersForPerson.class).to(IncomeDependentUtilityOfMoneyPersonScoringParameters.class).in(Singleton.class);
+		 * did not work.
+		 */
+
+		Controler controler = new Controler( scenario );
+		controler.addOverridingModule( new AbstractModule() {
+			@Override
+			public void install() {
+				bind(RaptorIntermodalAccessEgress.class).to(EnhancedRaptorIntermodalAccessEgress.class);
+				bind(ScoringParametersForPerson.class).to(IncomeDependentUtilityOfMoneyPersonScoringParameters.class).in(Singleton.class);
+			}
+		});
+		controler.run();
+		com.google.inject.Injector injector = controler.getInjector();
+
+		EnhancedRaptorIntermodalAccessEgress raptorIntermodalAccessEgress = (EnhancedRaptorIntermodalAccessEgress) injector.getInstance(RaptorIntermodalAccessEgress.class);
+
+		Leg drtLeg = PopulationUtils.createLeg(TransportMode.drt);
+		drtLeg.setDepartureTime(7*3600.0 + 100);
+		drtLeg.setTravelTime(600); // current total 700
+		Route drtRoute = new DrtRoute(Id.createLinkId("dummy2"), Id.createLinkId("dummy3"));
+		drtRoute.setDistance(5000.0);
+		drtLeg.setRoute(drtRoute);
+		legs.add(drtLeg);
+
+		RIntermodalAccessEgress result = raptorIntermodalAccessEgress.calcIntermodalAccessEgress(legs, params, person, RaptorStopFinder.Direction.ACCESS );
+
+		//Asserts
+		Assert.assertEquals("Total travel time is wrong!", 600.0, result.travelTime, MatsimTestUtils.EPSILON);
+
+		/*
+		 * disutility: -1 * ( ASC + distance + time + monetary distance rate + fare)
+		 *
+		 * marginal utility of money = ((2000+6000)/2) / 2000 = 4000/2000 = 2.0
+		 *
+		 * drtLeg: -1 * (-2.1 -0.00024*5000 -(0.00025+0.00011)*600 +2.0*(-0.00026*5000 -max(2.0, 1+0.0002*5000+0.0003*600)) ) = 10.476
+		 */
+		Assert.assertEquals("Total disutility is wrong!", 10.476, result.disutility, MatsimTestUtils.EPSILON);
+
+		for (int i = 0; i < legs.size(); i++) {
+			Assert.assertEquals("Input legs != output legs!", legs.get(i), result.routeParts.get(i));
+		}
+		Assert.assertEquals("Input legs != output legs!", legs.size(), result.routeParts.size());
+	}
+
+
 }
