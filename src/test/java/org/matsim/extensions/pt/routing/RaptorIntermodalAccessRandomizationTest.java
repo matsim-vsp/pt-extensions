@@ -86,7 +86,6 @@ public class RaptorIntermodalAccessRandomizationTest {
         config.planCalcScore().setWriteExperiencedPlans(true);
         config.controler().setLastIteration(50);
         config.controler().setOutputDirectory(testUtils.getOutputDirectory());
-        config.plans().setHandlingOfPlansWithoutRoutingMode(PlansConfigGroup.HandlingOfPlansWithoutRoutingMode.useMainModeIdentifier);
 
         PlansCalcRouteConfigGroup.ModeRoutingParams bikeRoutingParams = new PlansCalcRouteConfigGroup.ModeRoutingParams();
         bikeRoutingParams.setMode(TransportMode.bike);
