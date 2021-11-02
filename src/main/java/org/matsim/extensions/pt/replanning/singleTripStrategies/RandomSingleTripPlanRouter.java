@@ -34,6 +34,7 @@ import org.matsim.core.router.PlanRouter;
 import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.router.TripStructureUtils.Trip;
+import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.facilities.ActivityFacilities;
 import org.matsim.facilities.FacilitiesUtils;
 import org.matsim.vehicles.Vehicle;
@@ -47,6 +48,7 @@ import org.matsim.vehicles.Vehicle;
  */
 public class RandomSingleTripPlanRouter implements PlanAlgorithm, PersonAlgorithm {
 	private final Random rnd;
+	private TimeInterpretation timeInterpretation;
 	private final TripRouter tripRouter;
 	private final ActivityFacilities facilities;
 
@@ -60,10 +62,12 @@ public class RandomSingleTripPlanRouter implements PlanAlgorithm, PersonAlgorith
 	public RandomSingleTripPlanRouter(
 			final TripRouter tripRouter,
 			final ActivityFacilities facilities,
-			final Random rnd) {
+			final Random rnd,
+			TimeInterpretation timeInterpretation) {
 		this.tripRouter = tripRouter;
 		this.facilities = facilities;
-		this.rnd = rnd;		
+		this.rnd = rnd;
+		this.timeInterpretation = timeInterpretation;
 	}
 
 	/**
@@ -71,8 +75,8 @@ public class RandomSingleTripPlanRouter implements PlanAlgorithm, PersonAlgorith
 	 */
 	public RandomSingleTripPlanRouter(
 			final TripRouter routingHandler,
-			final Random rnd) {
-		this( routingHandler, null , rnd);
+			final Random rnd, TimeInterpretation timeInterpretation) {
+		this( routingHandler, null , rnd, timeInterpretation);
 	}
 
 	@Override
@@ -88,9 +92,10 @@ public class RandomSingleTripPlanRouter implements PlanAlgorithm, PersonAlgorith
 							TripStructureUtils.identifyMainMode( oldTrip.getTripElements() ),
 							FacilitiesUtils.toFacility( oldTrip.getOriginActivity(), facilities ),
 							FacilitiesUtils.toFacility( oldTrip.getDestinationActivity(), facilities ),
-							PlanRouter.calcEndOfActivity( oldTrip.getOriginActivity() , plan, tripRouter.getConfig() ),
-							plan.getPerson() );
-						
+							timeInterpretation.decideOnActivityEndTimeAlongPlan( oldTrip.getOriginActivity() , plan).seconds(),
+							plan.getPerson(),
+							oldTrip.getTripAttributes()); //not sure whether this should be oldTrip.getOriginActivity().getAttributes()
+
 			putVehicleFromOldTripIntoNewTripIfMeaningful(oldTrip, newTrip);
 			TripRouter.insertTrip(
 					plan, 

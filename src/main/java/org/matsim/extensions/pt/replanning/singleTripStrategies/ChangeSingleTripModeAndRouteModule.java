@@ -29,6 +29,7 @@ import org.matsim.core.gbl.MatsimRandom;
 import org.matsim.core.population.algorithms.PlanAlgorithm;
 import org.matsim.core.replanning.modules.AbstractMultithreadedModule;
 import org.matsim.core.router.TripRouter;
+import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.facilities.ActivityFacilities;
 
 /**
@@ -38,17 +39,19 @@ import org.matsim.facilities.ActivityFacilities;
  * @author mrieser
  */
 public class ChangeSingleTripModeAndRouteModule extends AbstractMultithreadedModule {
-	
+
 	private ActivityFacilities facilities;
 
 	private final Provider<TripRouter> tripRouterProvider;
 	private final ChangeModeConfigGroup changeModeConfigGroup;
+	private final TimeInterpretation timeInterpretation;
 
-	public ChangeSingleTripModeAndRouteModule(ActivityFacilities facilities, Provider<TripRouter> tripRouterProvider, GlobalConfigGroup globalConfigGroup, ChangeModeConfigGroup changeModeConfigGroup) {
+	public ChangeSingleTripModeAndRouteModule(ActivityFacilities facilities, Provider<TripRouter> tripRouterProvider, GlobalConfigGroup globalConfigGroup, ChangeModeConfigGroup changeModeConfigGroup, TimeInterpretation timeInterpretation) {
 		super(globalConfigGroup);
 		this.facilities = facilities;
 		this.tripRouterProvider = tripRouterProvider;
 		this.changeModeConfigGroup = changeModeConfigGroup;
+		this.timeInterpretation = timeInterpretation;
 	}
 
 	@Override
@@ -57,8 +60,8 @@ public class ChangeSingleTripModeAndRouteModule extends AbstractMultithreadedMod
 					tripRouterProvider.get(),
 					facilities,
 					MatsimRandom.getLocalInstance(),
-					changeModeConfigGroup
-					);
+					changeModeConfigGroup,
+					timeInterpretation);
 	}
 
 }

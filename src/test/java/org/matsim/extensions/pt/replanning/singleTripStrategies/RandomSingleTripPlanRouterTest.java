@@ -44,6 +44,7 @@ import org.matsim.core.router.costcalculators.OnlyTimeDependentTravelDisutilityF
 import org.matsim.core.scenario.ScenarioByInstanceModule;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.io.IOUtils;
+import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.examples.ExamplesUtils;
 import org.matsim.testcases.MatsimTestUtils;
 
@@ -82,7 +83,7 @@ public class RandomSingleTripPlanRouterTest {
         	}
         }
                 
-        RandomSingleTripPlanRouter singleTripPlanRouter = new RandomSingleTripPlanRouter(tripRouter, MatsimRandom.getLocalInstance());     
+        RandomSingleTripPlanRouter singleTripPlanRouter = new RandomSingleTripPlanRouter(tripRouter, MatsimRandom.getLocalInstance(), TimeInterpretation.create(config));
         singleTripPlanRouter.run(plan);
         
     	System.out.println("----");

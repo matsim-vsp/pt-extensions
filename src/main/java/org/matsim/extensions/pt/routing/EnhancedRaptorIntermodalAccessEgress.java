@@ -128,7 +128,7 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
 
 						}
 
-						fare += drtFareParams.getBasefare();
+						fare += drtFareParams.getBaseFare();
 						fare = Math.max(fare, drtFareParams.getMinFarePerTrip());
 						utility += -1. * fare * marginalUtilityOfMoney;
 					}

@@ -28,6 +28,7 @@ import org.matsim.core.gbl.MatsimRandom;
 import org.matsim.core.population.algorithms.PlanAlgorithm;
 import org.matsim.core.replanning.modules.AbstractMultithreadedModule;
 import org.matsim.core.router.TripRouter;
+import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.facilities.ActivityFacilities;
 
 /**
@@ -41,11 +42,13 @@ public class RandomSingleTripReRouteModule extends AbstractMultithreadedModule {
 	private ActivityFacilities facilities;
 
 	private final Provider<TripRouter> tripRouterProvider;
+	private TimeInterpretation timeInterpretation;
 
-	public RandomSingleTripReRouteModule(ActivityFacilities facilities, Provider<TripRouter> tripRouterProvider, GlobalConfigGroup globalConfigGroup) {
+	public RandomSingleTripReRouteModule(ActivityFacilities facilities, Provider<TripRouter> tripRouterProvider, GlobalConfigGroup globalConfigGroup, TimeInterpretation timeInterpretation) {
 		super(globalConfigGroup);
 		this.facilities = facilities;
 		this.tripRouterProvider = tripRouterProvider;
+		this.timeInterpretation = timeInterpretation;
 	}
 
 	@Override
@@ -53,7 +56,8 @@ public class RandomSingleTripReRouteModule extends AbstractMultithreadedModule {
 			return new RandomSingleTripPlanRouter(
 					tripRouterProvider.get(),
 					facilities,
-					MatsimRandom.getLocalInstance());
+					MatsimRandom.getLocalInstance(),
+					timeInterpretation);
 	}
 
 }

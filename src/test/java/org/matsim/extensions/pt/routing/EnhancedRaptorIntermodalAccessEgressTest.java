@@ -106,7 +106,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
 		drtConfigGroup.setMode(TransportMode.drt);
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBasefare(1.0);
+		drtFareParams.setBaseFare(1.0);
 		drtFareParams.setDailySubscriptionFee(10.0);
 		drtFareParams.setMinFarePerTrip(2.0);
 		drtFareParams.setDistanceFare_m(0.0002);
@@ -406,7 +406,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
 		drtConfigGroup.setMode(TransportMode.drt);
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBasefare(1.0);
+		drtFareParams.setBaseFare(1.0);
 		drtFareParams.setDailySubscriptionFee(10.0);
 		drtFareParams.setMinFarePerTrip(2.0);
 		drtFareParams.setDistanceFare_m(0.0002);
@@ -500,7 +500,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
 		drtConfigGroup.setMode(TransportMode.drt);
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBasefare(1.0);
+		drtFareParams.setBaseFare(1.0);
 		drtFareParams.setDailySubscriptionFee(10.0);
 		drtFareParams.setMinFarePerTrip(2.0);
 		drtFareParams.setDistanceFare_m(0.0002);
