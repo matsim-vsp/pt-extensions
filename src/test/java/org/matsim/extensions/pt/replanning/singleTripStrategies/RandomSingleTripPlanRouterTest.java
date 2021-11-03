@@ -35,6 +35,7 @@ import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Injector;
 import org.matsim.core.gbl.MatsimRandom;
+import org.matsim.core.router.PlanRouter;
 import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripRouterModule;
 import org.matsim.core.router.TripStructureUtils;
@@ -44,6 +45,8 @@ import org.matsim.core.router.costcalculators.OnlyTimeDependentTravelDisutilityF
 import org.matsim.core.scenario.ScenarioByInstanceModule;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.io.IOUtils;
+import org.matsim.core.utils.timing.TimeInterpretation;
+import org.matsim.core.utils.timing.TimeInterpretationModule;
 import org.matsim.examples.ExamplesUtils;
 import org.matsim.testcases.MatsimTestUtils;
 
@@ -63,12 +66,17 @@ public class RandomSingleTripPlanRouterTest {
             @Override
             public void install() {
                 install(new TripRouterModule());
+				install(new TimeInterpretationModule());
                 install(new ScenarioByInstanceModule(scenario));
                 addTravelTimeBinding("car").toInstance(new FreespeedTravelTimeAndDisutility(config.planCalcScore()));
                 addTravelDisutilityFactoryBinding("car").toInstance(new OnlyTimeDependentTravelDisutilityFactory());
             }
         });
         TripRouter tripRouter = injector.getInstance(TripRouter.class);
+        TimeInterpretation timeInterpretation = TimeInterpretation.create(config);
+        PlanRouter planRouter = new PlanRouter(tripRouter, timeInterpretation);
+
+        scenario.getPopulation().getPersons().values().stream().forEach(person -> planRouter.run(person));
         
         Plan plan = scenario.getPopulation().getPersons().get(Id.createPersonId(1)).getSelectedPlan();
         int carTripsBefore = 0;
@@ -82,7 +90,7 @@ public class RandomSingleTripPlanRouterTest {
         	}
         }
                 
-        RandomSingleTripPlanRouter singleTripPlanRouter = new RandomSingleTripPlanRouter(tripRouter, MatsimRandom.getLocalInstance());     
+        RandomSingleTripPlanRouter singleTripPlanRouter = new RandomSingleTripPlanRouter(tripRouter, MatsimRandom.getLocalInstance(), TimeInterpretation.create(config));
         singleTripPlanRouter.run(plan);
         
     	System.out.println("----");

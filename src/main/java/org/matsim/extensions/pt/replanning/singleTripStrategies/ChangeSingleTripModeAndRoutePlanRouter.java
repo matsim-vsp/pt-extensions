@@ -39,6 +39,7 @@ import org.matsim.core.router.PlanRouter;
 import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.router.TripStructureUtils.Trip;
+import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.facilities.ActivityFacilities;
 import org.matsim.facilities.FacilitiesUtils;
 import org.matsim.vehicles.Vehicle;
@@ -54,7 +55,8 @@ public class ChangeSingleTripModeAndRoutePlanRouter implements PlanAlgorithm, Pe
 	private final Random rnd;
 	private final TripRouter tripRouter;
 	private final ActivityFacilities facilities;
-	
+	private final TimeInterpretation timeInterpretation;
+
 	private String[] possibleModes;
 	private boolean ignoreCarAvailability;
 	private boolean allowSwitchFromListedModesOnly;
@@ -71,12 +73,14 @@ public class ChangeSingleTripModeAndRoutePlanRouter implements PlanAlgorithm, Pe
 			final TripRouter tripRouter,
 			final ActivityFacilities facilities,
 			final Random rnd,
-			final ChangeModeConfigGroup changeModeConfigGroup) {
+			final ChangeModeConfigGroup changeModeConfigGroup,
+			TimeInterpretation timeInterpretation) {
 		this.tripRouter = tripRouter;
 		this.facilities = facilities;
 		this.rnd = rnd;
 		this.possibleModes = changeModeConfigGroup.getModes();
 		this.ignoreCarAvailability = changeModeConfigGroup.getIgnoreCarAvailability();
+		this.timeInterpretation = timeInterpretation;
 		
 		if (changeModeConfigGroup.getBehavior().equals(ChangeModeConfigGroup.Behavior.fromSpecifiedModesToSpecifiedModes)) {
 			this.allowSwitchFromListedModesOnly = true;
@@ -115,14 +119,14 @@ public class ChangeSingleTripModeAndRoutePlanRouter implements PlanAlgorithm, Pe
 					newTripMainMode = oldTripMainMode;
 				}
 			}
-			
 			final List<? extends PlanElement> newTrip =
 					tripRouter.calcRoute(
 							newTripMainMode,
 							FacilitiesUtils.toFacility( oldTrip.getOriginActivity(), facilities ),
 							FacilitiesUtils.toFacility( oldTrip.getDestinationActivity(), facilities ),
-							PlanRouter.calcEndOfActivity( oldTrip.getOriginActivity() , plan, tripRouter.getConfig() ),
-							plan.getPerson() );
+							timeInterpretation.decideOnActivityEndTimeAlongPlan( oldTrip.getOriginActivity() , plan).seconds(),
+							plan.getPerson(),
+							oldTrip.getTripAttributes()); //not sure whether this should be oldTrip.getOriginActivity().getAttributes()
 						
 			putVehicleFromOldTripIntoNewTripIfMeaningful(oldTrip, newTrip);
 			TripRouter.insertTrip(

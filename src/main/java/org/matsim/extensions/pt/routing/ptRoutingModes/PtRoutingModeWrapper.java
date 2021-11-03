@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.router.RoutingModule;
+import org.matsim.core.router.RoutingRequest;
 import org.matsim.facilities.Facility;
 import org.matsim.extensions.pt.routing.ptRoutingModes.PtIntermodalRoutingModesConfigGroup.PersonAttribute2ValuePair;
 import org.matsim.extensions.pt.routing.ptRoutingModes.PtIntermodalRoutingModesConfigGroup.PtIntermodalRoutingModeParameterSet;
@@ -47,17 +48,16 @@ class PtRoutingModeWrapper implements RoutingModule {
 	}
 
 	@Override
-	public List<? extends PlanElement> calcRoute(Facility fromFacility, Facility toFacility, double departureTime,
-			Person person) {
+	public List<? extends PlanElement> calcRoute(RoutingRequest request) {
 		for (PersonAttribute2ValuePair personAttribute2ValuePair: personAttribute2ValuePairs) {
-			person.getAttributes().putAttribute(personAttribute2ValuePair.getPersonFilterAttribute(), 
+			request.getPerson().getAttributes().putAttribute(personAttribute2ValuePair.getPersonFilterAttribute(),
 					personAttribute2ValuePair.getPersonFilterValue());
 		}
 
-		List<? extends PlanElement> route = ptRouter.calcRoute(fromFacility, toFacility, departureTime, person);
+		List<? extends PlanElement> route = ptRouter.calcRoute(request);
 		
 		for (PersonAttribute2ValuePair personAttribute2ValuePair: personAttribute2ValuePairs) {
-			person.getAttributes().removeAttribute(personAttribute2ValuePair.getPersonFilterAttribute());
+			request.getPerson().getAttributes().removeAttribute(personAttribute2ValuePair.getPersonFilterAttribute());
 		}
 		
 		return route;
