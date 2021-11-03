@@ -35,6 +35,7 @@ import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Injector;
 import org.matsim.core.gbl.MatsimRandom;
+import org.matsim.core.router.PlanRouter;
 import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripRouterModule;
 import org.matsim.core.router.TripStructureUtils;
@@ -72,6 +73,10 @@ public class ChangeSingleTripModeAndRoutePlanRouterTest {
             }
         });
         TripRouter tripRouter = injector.getInstance(TripRouter.class);
+        TimeInterpretation timeInterpretation = TimeInterpretation.create(config);
+        PlanRouter planRouter = new PlanRouter(tripRouter, timeInterpretation);
+
+        scenario.getPopulation().getPersons().values().stream().forEach(person -> planRouter.run(person));
 		
         int carTripsBefore = 0;
         Plan plan = scenario.getPopulation().getPersons().get(Id.createPersonId(1)).getSelectedPlan();
@@ -84,8 +89,8 @@ public class ChangeSingleTripModeAndRoutePlanRouterTest {
         	}
         }
         
-		ChangeSingleTripModeAndRoutePlanRouter planRouter = new ChangeSingleTripModeAndRoutePlanRouter(tripRouter, null, MatsimRandom.getRandom(), config.changeMode(), TimeInterpretation.create(config));
-		planRouter.run(plan);
+		ChangeSingleTripModeAndRoutePlanRouter changeSingleTripModeAndRoutePlanRouter = new ChangeSingleTripModeAndRoutePlanRouter(tripRouter, null, MatsimRandom.getRandom(), config.changeMode(), TimeInterpretation.create(config));
+        changeSingleTripModeAndRoutePlanRouter.run(plan);
 		
     	System.out.println("----");
 		
