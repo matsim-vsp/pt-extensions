@@ -58,6 +58,14 @@
 		</repository>
 	</repositories>
 
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/matsim-vsp/pt-extensions</url>
+		</repository>
+	</distributionManagement>
+
 	<dependencies>
 		<dependency>
 			<!-- This is the matsim "core": -->
@@ -101,6 +109,12 @@
 			<groupId>org.matsim.contrib</groupId>
 			<artifactId>vsp</artifactId>
 			<version>${matsim.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>11.0.2</version>
 		</dependency>
 	</dependencies>
 
