@@ -8,6 +8,16 @@
 
 	<name>MATSim pt extensions</name>
 	<description>MATSim experimental pt extensions</description>
+	<organization>
+		<name>matsim-vsp</name>
+		<url>https://matsim.org</url>
+	</organization>
+	<inceptionYear>2020</inceptionYear>
+	<licenses>
+		<license>
+			<name>The GNU Lesser General Public License, Version 2.0</name>
+		</license>
+	</licenses>
 
 	<properties>
 		<!-- release -->
