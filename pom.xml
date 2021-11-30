@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.matsim-vsp</groupId>
 	<artifactId>pt-extensions</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<name>MATSim pt extensions</name>
 	<description>MATSim experimental pt extensions</description>
@@ -60,11 +60,6 @@
 		<repository>
 			<id>com.slimjars.trove4j</id>
 			<url>https://mvn.slimjars.com</url>
-		</repository>
-
-		<repository>
-			<id>SBB</id>
-			<url>https://schweizerischebundesbahnen.bintray.com/simba.mvn</url>
 		</repository>
 	</repositories>
 
