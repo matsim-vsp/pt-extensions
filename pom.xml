@@ -24,14 +24,14 @@
 		<!-- <matsim.version>12.0</matsim.version> -->
 
 		<!-- smapshot release -->
-		<matsim.version>14.0</matsim.version>
+		<matsim.version>15.0-PR2158</matsim.version>
 
 		<!-- weekly release -->
 		<!--<matsim.version>13.0-2021w05-SNAPSHOT</matsim.version>-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<repositories>
