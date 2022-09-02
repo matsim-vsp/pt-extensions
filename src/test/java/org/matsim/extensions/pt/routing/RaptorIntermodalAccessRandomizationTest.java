@@ -166,11 +166,11 @@ public class RaptorIntermodalAccessRandomizationTest {
         weirdWalkAccessParams.setMode(WEIRD_WALK);
         raptorConfig.addIntermodalAccessEgress(weirdWalkAccessParams);
 
-        PtExtensionsConfigGroup berlinConfig = ConfigUtils.addOrGetModule(config, PtExtensionsConfigGroup.class);
+        PtExtensionsConfigGroup ptExtensionsConfigGroup = ConfigUtils.addOrGetModule(config, PtExtensionsConfigGroup.class);
         PtExtensionsConfigGroup.IntermodalAccessEgressModeUtilityRandomization weirdWalkRandomizationConfig = new PtExtensionsConfigGroup.IntermodalAccessEgressModeUtilityRandomization();
         weirdWalkRandomizationConfig.setAccessEgressMode(WEIRD_WALK);
-        weirdWalkRandomizationConfig.setAdditiveRandomizationWidth(100);
-        berlinConfig.addIntermodalAccessEgressModeUtilityRandomization(weirdWalkRandomizationConfig);
+        weirdWalkRandomizationConfig.setAdditiveRandomizationWidthFrozenPerDirectionAndMode(100);
+        ptExtensionsConfigGroup.addIntermodalAccessEgressModeUtilityRandomization(weirdWalkRandomizationConfig);
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
