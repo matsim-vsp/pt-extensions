@@ -23,7 +23,8 @@ import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress.RIntermodalA
 import ch.sbb.matsim.routing.pt.raptor.RaptorParameters;
 import ch.sbb.matsim.routing.pt.raptor.RaptorStopFinder;
 import com.google.inject.Singleton;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -66,7 +67,7 @@ import static playground.vsp.scoring.IncomeDependentUtilityOfMoneyPersonScoringP
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EnhancedRaptorIntermodalAccessEgressTest {
-	private static final Logger log = Logger.getLogger( EnhancedRaptorIntermodalAccessEgressTest.class ) ;
+	private static final Logger log = LogManager.getLogger( EnhancedRaptorIntermodalAccessEgressTest.class ) ;
 	
 	@Rule public MatsimTestUtils utils = new MatsimTestUtils() ;
 

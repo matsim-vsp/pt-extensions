@@ -21,7 +21,8 @@
 
 package org.matsim.extensions.pt.mainModeIdentifier;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.router.AnalysisMainModeIdentifier;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  *
  */
 public final class SimpleTripChainAnalysisModeIdentifier implements AnalysisMainModeIdentifier {
-	private static final Logger log = Logger.getLogger(SimpleTripChainAnalysisModeIdentifier.class);
+	private static final Logger log = LogManager.getLogger(SimpleTripChainAnalysisModeIdentifier.class);
 
 	@Override public String identifyMainMode( List<? extends PlanElement> planElements ) {
 		return planElements.stream().filter(pe -> pe instanceof Leg).map(pe -> ((Leg) pe).getMode()).collect(Collectors.joining("-"));

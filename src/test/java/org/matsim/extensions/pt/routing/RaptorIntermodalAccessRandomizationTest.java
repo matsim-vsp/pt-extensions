@@ -22,7 +22,8 @@ package org.matsim.extensions.pt.routing;
 import ch.sbb.matsim.config.SwissRailRaptorConfigGroup;
 import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress;
 import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,7 +35,6 @@ import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup;
 import org.matsim.core.config.groups.PlansCalcRouteConfigGroup;
-import org.matsim.core.config.groups.PlansConfigGroup;
 import org.matsim.core.config.groups.StrategyConfigGroup;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
@@ -67,7 +67,7 @@ public class RaptorIntermodalAccessRandomizationTest {
 //    ExamplesUtils examplesUtils = new ExamplesUtils();
 
     private static final String WEIRD_WALK = "weirdWalk";
-    private static final Logger log = Logger.getLogger( RaptorIntermodalAccessRandomizationTest.class ) ;
+    private static final Logger log = LogManager.getLogger( RaptorIntermodalAccessRandomizationTest.class ) ;
     Id<Person> agent1Id = Id.createPersonId("weirdWalkTravelTimeDifferentFromRoutedAgent");
     Id<Person> agent2Id = Id.createPersonId("weirdWalkTravelTimeSameAsRoutedAgent");
 

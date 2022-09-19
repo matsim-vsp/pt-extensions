@@ -18,7 +18,8 @@
  * *********************************************************************** */
 package org.matsim.extensions.pt.mainModeIdentifier;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.matsim.api.core.v01.Scenario;
@@ -38,7 +39,7 @@ import java.util.List;
  *
  */
 public class SimpleTripChainAnalysisModeIdentifierTest {
-	private static final Logger log = Logger.getLogger( SimpleTripChainAnalysisModeIdentifierTest.class ) ;
+	private static final Logger log = LogManager.getLogger( SimpleTripChainAnalysisModeIdentifierTest.class ) ;
 	
 	@Rule public MatsimTestUtils utils = new MatsimTestUtils() ;
 	

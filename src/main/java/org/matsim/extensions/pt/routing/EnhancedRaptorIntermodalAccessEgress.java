@@ -8,7 +8,8 @@ import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress;
 import ch.sbb.matsim.routing.pt.raptor.RaptorParameters;
 import ch.sbb.matsim.routing.pt.raptor.RaptorStopFinder;
 import com.google.inject.Inject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Leg;
@@ -42,7 +43,7 @@ import java.util.Random;
 public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAccessEgress {
 
 	public static final String MARGINAL_UTILITY_OF_MONEY_PERSONAL_FACTOR_ATTRIBUTE_NAME = "marginalUtilityOfMoneyPersonalFactor";
-	private static final Logger log = Logger.getLogger(EnhancedRaptorIntermodalAccessEgress.class);
+	private static final Logger log = LogManager.getLogger(EnhancedRaptorIntermodalAccessEgress.class);
 	private final ScoringParametersForPerson parametersForPerson;
 	Config config;
 	PtExtensionsConfigGroup ptExtensionsCfg;
