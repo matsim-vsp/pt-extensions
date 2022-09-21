@@ -22,7 +22,8 @@
  */
 package org.matsim.extensions.pt.fare.intermodalTripFareCompensator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -47,7 +48,7 @@ import java.util.Map;
  * @author vsp-gleich
  */
 public class IntermodalTripFareCompensatorsTest {
-	private static final Logger log = Logger.getLogger( IntermodalTripFareCompensatorsTest.class ) ;
+	private static final Logger log = LogManager.getLogger( IntermodalTripFareCompensatorsTest.class ) ;
 	
 	@Rule public MatsimTestUtils utils = new MatsimTestUtils() ;
 

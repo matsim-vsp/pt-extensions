@@ -19,7 +19,8 @@
 
 package org.matsim.extensions.pt.routing.ptRoutingModes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.matsim.core.config.ConfigGroup;
 import org.matsim.core.config.ReflectiveConfigGroup;
 
@@ -30,7 +31,7 @@ import java.util.*;
  */
 public class PtIntermodalRoutingModesConfigGroup extends ReflectiveConfigGroup {
 
-	private static final Logger log = Logger.getLogger(PtIntermodalRoutingModesConfigGroup.class);
+	private static final Logger log = LogManager.getLogger(PtIntermodalRoutingModesConfigGroup.class);
     public static final String GROUP = "ptIntermodalRoutingModes";
 
     private final Map<String, PtIntermodalRoutingModeParameterSet> routingMode2PtIntermodalRoutingModeParameterSet = new HashMap<>();

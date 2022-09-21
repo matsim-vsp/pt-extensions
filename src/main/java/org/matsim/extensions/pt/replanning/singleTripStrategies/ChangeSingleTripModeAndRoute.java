@@ -30,6 +30,7 @@ import org.matsim.core.replanning.PlanStrategy;
 import org.matsim.core.replanning.PlanStrategyImpl.Builder;
 import org.matsim.core.replanning.selectors.RandomPlanSelector;
 import org.matsim.core.router.TripRouter;
+import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.facilities.ActivityFacilities;
 
 public class ChangeSingleTripModeAndRoute implements Provider<PlanStrategy> {
@@ -38,11 +39,12 @@ public class ChangeSingleTripModeAndRoute implements Provider<PlanStrategy> {
 	@Inject private ChangeModeConfigGroup changeModeConfigGroup;
 	@Inject private ActivityFacilities facilities;
 	@Inject private Provider<TripRouter> tripRouterProvider;
+	@Inject private TimeInterpretation timeInterpretation;
 
 	@Override
 	public PlanStrategy get() {
 		Builder builder = new Builder(new RandomPlanSelector<Plan,Person>()) ;
-		builder.addStrategyModule(new ChangeSingleTripModeAndRouteModule(facilities, tripRouterProvider, globalConfigGroup, changeModeConfigGroup));
+		builder.addStrategyModule(new ChangeSingleTripModeAndRouteModule(facilities, tripRouterProvider, globalConfigGroup, changeModeConfigGroup, timeInterpretation));
 		return builder.build() ;
 	}
 

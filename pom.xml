@@ -4,24 +4,34 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.matsim-vsp</groupId>
 	<artifactId>pt-extensions</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<name>MATSim pt extensions</name>
 	<description>MATSim experimental pt extensions</description>
+	<organization>
+		<name>matsim-vsp</name>
+		<url>https://matsim.org</url>
+	</organization>
+	<inceptionYear>2020</inceptionYear>
+	<licenses>
+		<license>
+			<name>The GNU Lesser General Public License, Version 2.0</name>
+		</license>
+	</licenses>
 
 	<properties>
 		<!-- release -->
 		<!-- <matsim.version>12.0</matsim.version> -->
 
 		<!-- smapshot release -->
-		<matsim.version>14.0-PR1583</matsim.version>
+		<matsim.version>15.0-PR2187</matsim.version>
 
 		<!-- weekly release -->
 		<!--<matsim.version>13.0-2021w05-SNAPSHOT</matsim.version>-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<repositories>
@@ -51,12 +61,15 @@
 			<id>com.slimjars.trove4j</id>
 			<url>https://mvn.slimjars.com</url>
 		</repository>
-
-		<repository>
-			<id>SBB</id>
-			<url>https://schweizerischebundesbahnen.bintray.com/simba.mvn</url>
-		</repository>
 	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/matsim-vsp/pt-extensions</url>
+		</repository>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -101,6 +114,12 @@
 			<groupId>org.matsim.contrib</groupId>
 			<artifactId>vsp</artifactId>
 			<version>${matsim.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>11.0.2</version>
 		</dependency>
 	</dependencies>
 

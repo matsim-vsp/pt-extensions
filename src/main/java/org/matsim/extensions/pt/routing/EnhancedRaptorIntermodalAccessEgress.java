@@ -8,7 +8,8 @@ import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress;
 import ch.sbb.matsim.routing.pt.raptor.RaptorParameters;
 import ch.sbb.matsim.routing.pt.raptor.RaptorStopFinder;
 import com.google.inject.Inject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Leg;
@@ -42,7 +43,7 @@ import java.util.Random;
 public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAccessEgress {
 
 	public static final String MARGINAL_UTILITY_OF_MONEY_PERSONAL_FACTOR_ATTRIBUTE_NAME = "marginalUtilityOfMoneyPersonalFactor";
-	private static final Logger log = Logger.getLogger(EnhancedRaptorIntermodalAccessEgress.class);
+	private static final Logger log = LogManager.getLogger(EnhancedRaptorIntermodalAccessEgress.class);
 	private final ScoringParametersForPerson parametersForPerson;
 	Config config;
 	PtExtensionsConfigGroup ptExtensionsCfg;
@@ -128,7 +129,7 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
 
 						}
 
-						fare += drtFareParams.getBasefare();
+						fare += drtFareParams.getBaseFare();
 						fare = Math.max(fare, drtFareParams.getMinFarePerTrip());
 						utility += -1. * fare * marginalUtilityOfMoney;
 					}
@@ -156,9 +157,13 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
                 IntermodalAccessEgressModeUtilityRandomization randomization = ptExtensionsCfg.getIntermodalAccessEgressModeUtilityRandomization(mode);
                 if (randomization != null) {
                 	double utilityRandomizationSigma = randomization.getAdditiveRandomizationWidth();
-                	if (utilityRandomizationSigma != 0.0) {
-                        Double additiveRandomization = lastModes2Randomization.get(mode);
-                        if (additiveRandomization == null) {
+					if (utilityRandomizationSigma != 0.0) {
+						utility += (random.nextDouble() - 0.5) * utilityRandomizationSigma;
+					}
+					double utilityRandomizationSigmaFrozenPerDirectionAndMode = randomization.getAdditiveRandomizationWidthFrozenPerDirectionAndMode();
+                	if (utilityRandomizationSigmaFrozenPerDirectionAndMode != 0.0) {
+                        Double additiveRandomizationFrozenPerDirectionAndMode = lastModes2Randomization.get(mode);
+                        if (additiveRandomizationFrozenPerDirectionAndMode == null) {
                             /**
                              * logNormal distribution in {@link org.matsim.core.router.costcalculators.RandomizingTimeDistanceTravelDisutilityFactory}
                              */
@@ -167,13 +172,13 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
 //                            Does log normal distribution really make sense for a term we add (instead of multiply)?
 //                            Maybe rather use log normal distribution to multiply with the estimated travel time?
 //                            (fare and distance seem more predictable, but travel time fluctuates)-gl mar'20
-                            additiveRandomization = (random.nextDouble() - 0.5) * utilityRandomizationSigma;
-                            lastModes2Randomization.put(mode, additiveRandomization);
+                            additiveRandomizationFrozenPerDirectionAndMode = (random.nextDouble() - 0.5) * utilityRandomizationSigmaFrozenPerDirectionAndMode;
+                            lastModes2Randomization.put(mode, additiveRandomizationFrozenPerDirectionAndMode);
                         }
 //                        System.err.println(person.getId().toString() + ";" + direction.toString() + ";" + additiveRandomization);
 //                        utility *= modeRandom; // analogue beta factor (taste variations)
 
-                        utility += additiveRandomization;
+                        utility += additiveRandomizationFrozenPerDirectionAndMode;
 //                        positive utility for a leg is hard to interpret and inh theory should not happen, but it can happen with high intermodal compensations. So do not exclude it.
 //                        if (utility > 0) {
 //                            utility = 0;

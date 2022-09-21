@@ -23,7 +23,8 @@ import ch.sbb.matsim.routing.pt.raptor.RaptorIntermodalAccessEgress.RIntermodalA
 import ch.sbb.matsim.routing.pt.raptor.RaptorParameters;
 import ch.sbb.matsim.routing.pt.raptor.RaptorStopFinder;
 import com.google.inject.Singleton;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -36,7 +37,7 @@ import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Node;
 import org.matsim.api.core.v01.population.*;
 import org.matsim.contrib.drt.fare.DrtFareParams;
-import org.matsim.contrib.drt.optimizer.insertion.ExtensiveInsertionSearchParams;
+import org.matsim.contrib.drt.optimizer.insertion.extensive.ExtensiveInsertionSearchParams;
 import org.matsim.contrib.drt.routing.DrtRoute;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
 import org.matsim.contrib.drt.run.MultiModeDrtConfigGroup;
@@ -66,7 +67,7 @@ import static playground.vsp.scoring.IncomeDependentUtilityOfMoneyPersonScoringP
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EnhancedRaptorIntermodalAccessEgressTest {
-	private static final Logger log = Logger.getLogger( EnhancedRaptorIntermodalAccessEgressTest.class ) ;
+	private static final Logger log = LogManager.getLogger( EnhancedRaptorIntermodalAccessEgressTest.class ) ;
 	
 	@Rule public MatsimTestUtils utils = new MatsimTestUtils() ;
 
@@ -106,7 +107,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
 		drtConfigGroup.setMode(TransportMode.drt);
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBasefare(1.0);
+		drtFareParams.setBaseFare(1.0);
 		drtFareParams.setDailySubscriptionFee(10.0);
 		drtFareParams.setMinFarePerTrip(2.0);
 		drtFareParams.setDistanceFare_m(0.0002);
@@ -406,7 +407,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
 		drtConfigGroup.setMode(TransportMode.drt);
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBasefare(1.0);
+		drtFareParams.setBaseFare(1.0);
 		drtFareParams.setDailySubscriptionFee(10.0);
 		drtFareParams.setMinFarePerTrip(2.0);
 		drtFareParams.setDistanceFare_m(0.0002);
@@ -500,7 +501,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
 		drtConfigGroup.setMode(TransportMode.drt);
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBasefare(1.0);
+		drtFareParams.setBaseFare(1.0);
 		drtFareParams.setDailySubscriptionFee(10.0);
 		drtFareParams.setMinFarePerTrip(2.0);
 		drtFareParams.setDistanceFare_m(0.0002);

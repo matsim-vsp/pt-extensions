@@ -59,8 +59,11 @@ public class PtExtensionsConfigGroup extends ReflectiveConfigGroup {
         private static final String ACCESS_EGRESS_MODE = "accessEgressMode";
         private static final String ADDITIVE_RANDOMIZATION_WIDTH = "additiveRandomizationWidth";
 
+        private static final String ADDITIVE_RANDOMIZATION_WIDTH_FROZEN_PER_DIRECTION_AND_MODE = "additiveRandomizationWidthFrozenPerDirectionAndMode";
+
         private String accessEgressMode;
         private double additiveRandomizationWidth = 0;
+        private double additiveRandomizationWidthFrozenPerDirectionAndMode = 0;
 
         public IntermodalAccessEgressModeUtilityRandomization() {
             super(TYPE);
@@ -84,6 +87,16 @@ public class PtExtensionsConfigGroup extends ReflectiveConfigGroup {
         @StringSetter(ADDITIVE_RANDOMIZATION_WIDTH)
         public void setAdditiveRandomizationWidth(double additiveRandomizationWidth) {
             this.additiveRandomizationWidth = additiveRandomizationWidth;
+        }
+
+        @StringGetter(ADDITIVE_RANDOMIZATION_WIDTH_FROZEN_PER_DIRECTION_AND_MODE)
+        public double getAdditiveRandomizationWidthFrozenPerDirectionAndMode() {
+            return additiveRandomizationWidthFrozenPerDirectionAndMode;
+        }
+
+        @StringSetter(ADDITIVE_RANDOMIZATION_WIDTH_FROZEN_PER_DIRECTION_AND_MODE)
+        public void setAdditiveRandomizationWidthFrozenPerDirectionAndMode(double additiveRandomizationWidthFrozenPerDirectionAndMode) {
+            this.additiveRandomizationWidthFrozenPerDirectionAndMode = additiveRandomizationWidthFrozenPerDirectionAndMode;
         }
     }
 			
