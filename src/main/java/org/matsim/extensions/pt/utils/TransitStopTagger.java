@@ -44,7 +44,7 @@ public class TransitStopTagger {
     private static final Logger log = LogManager.getLogger(TransitStopTagger.class);
 
     public static void attributeTransitStopFacilitiesFromTransitScheduleFile(URL fileWithAttributes, TransitSchedule scheduleToBeAttributed) {
-        if (fileWithAttributes == null || fileWithAttributes.equals("null") || fileWithAttributes.equals("")) {
+        if (fileWithAttributes == null) {
             log.info("No file to copy stop filter attributes from. If stop filter attributes were set for the intermodal pt router, no stops will be found.");
             return;
         }
@@ -70,7 +70,7 @@ public class TransitStopTagger {
         log.info("added TransitStopFacility attributes to main scenario's TransitStopFacilities from file " + fileWithAttributes);
     }
 
-    public final static void tagTransitStopsInShpFile(TransitSchedule transitSchedule,
+    public static void tagTransitStopsInShpFile(TransitSchedule transitSchedule,
                                                       String newAttributeName, String newAttributeValue,
                                                       URL shapeFile,
                                                       String oldFilterAttribute, String oldFilterValue,
@@ -93,9 +93,9 @@ public class TransitStopTagger {
     }
 
     /**
-     * @param transitSchedule
+     * TODO: add more gtfs modes, rethink
      */
-    public final static void tagLineAndModeServingStop(TransitSchedule transitSchedule) {
+    public static void tagLineAndModeServingStop(TransitSchedule transitSchedule) {
         for (TransitLine line : transitSchedule.getTransitLines().values()) {
             String gtfsTransitMode = "unknown";
 
@@ -109,69 +109,34 @@ public class TransitStopTagger {
                     // and https://developers.google.com/transit/gtfs/reference/#routestxt
                     // In GTFS-VBB-20181214.zip some RE lines are wrongly attributed as type 700 (bus)!
 
-                    case 0:
-                        gtfsTransitMode = "Tram, Light Rail, Streetcar";
-                        break;
-                    case 1:
-                        gtfsTransitMode = "Subway, Metro";
-                        break;
-                    case 2:
-                        gtfsTransitMode = "Rail";
-                        break;
-                    case 3:
-                        gtfsTransitMode = "Bus";
-                        break;
-                    case 4:
-                        gtfsTransitMode = "Ferry";
-                        break;
-                    case 5:
-                        gtfsTransitMode = "Cable Car";
-                        break;
-                    case 6:
-                        gtfsTransitMode = "Gondola, Suspended cable car";
-                        break;
-                    case 7:
-                        gtfsTransitMode = "Funicular";
-                        break;
-                    case 11:
-                        gtfsTransitMode = "Trolleybus";
-                        break;
-                    case 12:
-                        gtfsTransitMode = "Monorail";
-                        break;
+                    case 0 -> gtfsTransitMode = "Tram, Light Rail, Streetcar";
+                    case 1 -> gtfsTransitMode = "Subway, Metro";
+                    case 2 -> gtfsTransitMode = "Rail";
+                    case 3 -> gtfsTransitMode = "Bus";
+                    case 4 -> gtfsTransitMode = "Ferry";
+                    case 5 -> gtfsTransitMode = "Cable Car";
+                    case 6 -> gtfsTransitMode = "Gondola, Suspended cable car";
+                    case 7 -> gtfsTransitMode = "Funicular";
+                    case 11 -> gtfsTransitMode = "Trolleybus";
+                    case 12 -> gtfsTransitMode = "Monorail";
+
 
                     // new codes
-                    case 100:
-                        gtfsTransitMode = "Rail";
-                        break;
-                    case 109: // VBB gtfs
-                        gtfsTransitMode = "S-Bahn";
-                        break;
-                    case 400:
-                        gtfsTransitMode = "Subway, Metro";
-                        break;
-                    case 700:
-                        gtfsTransitMode = "Bus";
-                        break;
-                    case 900:
-                        gtfsTransitMode = "Tram, Light Rail, Streetcar";
-                        break;
-                    case 1000:
-                        gtfsTransitMode = "Ferry";
-                        break;
-                    case 1300:
-                        gtfsTransitMode = "Gondola, Suspended cable car";
-                        break;
-                    case 1400:
-                        gtfsTransitMode = "Funicular";
-                        break;
-                    case 1701:
-                        gtfsTransitMode = "Cable Car";
-                        break;
-                    default:
+                    case 100 -> gtfsTransitMode = "Rail";
+                    case 109 -> // VBB gtfs
+                            gtfsTransitMode = "S-Bahn";
+                    case 400 -> gtfsTransitMode = "Subway, Metro";
+                    case 700 -> gtfsTransitMode = "Bus";
+                    case 900 -> gtfsTransitMode = "Tram, Light Rail, Streetcar";
+                    case 1000 -> gtfsTransitMode = "Ferry";
+                    case 1300 -> gtfsTransitMode = "Gondola, Suspended cable car";
+                    case 1400 -> gtfsTransitMode = "Funicular";
+                    case 1701 -> gtfsTransitMode = "Cable Car";
+                    default -> {
                         log.error("unknown gtfs mode type! Line id was " + line.getId().toString() +
                                 "; gtfs route type was " + line.getAttributes().getAttribute("gtfs_route_type"));
                         throw new RuntimeException("unknown transit mode");
+                    }
                 }
             } catch (NumberFormatException e) {
                 log.error("unknown gtfs transit mode or gtfs_route_type not given! Line id was " + line.getId().toString() +
@@ -215,14 +180,14 @@ public class TransitStopTagger {
 
                     Object attrLines2Deps = routeStop.getStopFacility().getAttributes().getAttribute("transitLines2Deps");
                     Map<Id<TransitLine>, List<Double>> line2Deps = attrLines2Deps == null ? new HashMap<>() : (attrLines2Deps instanceof Map ? (Map<Id<TransitLine>, List<Double>>) attrLines2Deps : new HashMap<>());
-                    route.getDepartures().values().stream().forEach(dep -> line2Deps.computeIfAbsent(line.getId(), k -> new ArrayList<Double>()).add(dep.getDepartureTime() + (routeStop.getDepartureOffset().isDefined() ? routeStop.getDepartureOffset().seconds() : routeStop.getArrivalOffset().seconds())));
+                    route.getDepartures().values().forEach(dep -> line2Deps.computeIfAbsent(line.getId(), k -> new ArrayList<Double>()).add(dep.getDepartureTime() + (routeStop.getDepartureOffset().isDefined() ? routeStop.getDepartureOffset().seconds() : routeStop.getArrivalOffset().seconds())));
                     routeStop.getStopFacility().getAttributes().putAttribute("transitLines2Deps", line2Deps);
                 }
             }
         }
     }
 
-    public final static void tagStopsServedByLineNameStartingWith(TransitSchedule transitSchedule, String lineNamePrefix, String attributeName, String attributeValue) {
+    public static void tagStopsServedByLineNameStartingWith(TransitSchedule transitSchedule, String lineNamePrefix, String attributeName, String attributeValue) {
         transitSchedule.getFacilities().values().stream().
                 filter(stop -> {
                     Object attr = stop.getAttributes().getAttribute("transitLines");
@@ -232,7 +197,7 @@ public class TransitStopTagger {
                 forEach(stop -> stop.getAttributes().putAttribute(attributeName, attributeValue));
     }
 
-    public final static void tagStopsServedByMinDeparturesXLineNameStartingWith(TransitSchedule transitSchedule, int minDepartures, String lineNamePrefix, String attributeName, String attributeValue) {
+    public static void tagStopsServedByMinDeparturesXLineNameStartingWith(TransitSchedule transitSchedule, int minDepartures, String lineNamePrefix, String attributeName, String attributeValue) {
         tagStopsServedWithLinesHavingMinXDepartures(transitSchedule, minDepartures, "transitLinesMin" + minDepartures + "Departures");
 
         transitSchedule.getFacilities().values().stream().
@@ -244,7 +209,7 @@ public class TransitStopTagger {
                 forEach(stop -> stop.getAttributes().putAttribute(attributeName, attributeValue));
     }
 
-    public final static void tagStopsServedByGtfsMode(TransitSchedule transitSchedule, String gtfsMode, String attributeName, String attributeValue) {
+    public static void tagStopsServedByGtfsMode(TransitSchedule transitSchedule, String gtfsMode, String attributeName, String attributeValue) {
         transitSchedule.getFacilities().values().stream().
                 filter(stop -> {
                     Object attr = stop.getAttributes().getAttribute("gtfsTransitModes");
@@ -254,7 +219,7 @@ public class TransitStopTagger {
                 forEach(stop -> stop.getAttributes().putAttribute(attributeName, attributeValue));
     }
 
-    public final static void deleteAllTransitStopFacilityTagsExcept(TransitSchedule transitSchedule, Set<String> attributeNamesToKeep) {
+    public static void deleteAllTransitStopFacilityTagsExcept(TransitSchedule transitSchedule, Set<String> attributeNamesToKeep) {
         transitSchedule.getFacilities().values().
                 forEach(stop -> {
                     Set<String> attributeNames = stop.getAttributes().getAsMap().keySet();
@@ -264,7 +229,7 @@ public class TransitStopTagger {
                 });
     }
 
-    public final static void tagStopsServedWithLinesHavingMinXDepartures(TransitSchedule transitSchedule, int minDepartures, String attributeName) {
+    public static void tagStopsServedWithLinesHavingMinXDepartures(TransitSchedule transitSchedule, int minDepartures, String attributeName) {
         transitSchedule.getFacilities().values().stream().
                 forEach(stop -> {
                     Object attrLines2Deps = stop.getAttributes().getAttribute("transitLines2Deps");
@@ -328,7 +293,7 @@ public class TransitStopTagger {
         TransitStopTagger.tagStopsServedByGtfsMode(transitSchedule, "Subway, Metro", "RE/RB/S/U", "true");
 
         // we only want to keep certain attributes, not the whole schedule
-        Collection<TransitLine> transitLinesAllDelete = transitSchedule.getTransitLines().values();
+//        Collection<TransitLine> transitLinesAllDelete = transitSchedule.getTransitLines().values();
 //        Iterator<TransitLine> iter = transitLinesAllDelete.iterator();
 //        while (iter.hasNext()) {
 //            transitSchedule.removeTransitLine(iter.next());
