@@ -21,7 +21,8 @@
 package org.matsim.extensions.pt.utils;
 
 import com.google.common.base.Verify;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
@@ -40,7 +41,7 @@ import java.util.*;
  */
 public class TransitStopTagger {
 
-    private static final Logger log = Logger.getLogger(TransitStopTagger.class);
+    private static final Logger log = LogManager.getLogger(TransitStopTagger.class);
 
     public static void attributeTransitStopFacilitiesFromTransitScheduleFile(URL fileWithAttributes, TransitSchedule scheduleToBeAttributed) {
         if (fileWithAttributes == null || fileWithAttributes.equals("null") || fileWithAttributes.equals("")) {
