@@ -100,7 +100,7 @@ public class IntermodalTripFareCompensatorPerTrip implements PersonDepartureEven
 	}
 	
 	private void compensateMoney(double time, Id<Person> agentId, double amount) {
-		events.processEvent(new PersonMoneyEvent(time, agentId, amount, "intermodalTripFareCompensation", ""));
+		events.processEvent(new PersonMoneyEvent(time, agentId, amount, "intermodalTripFareCompensation", "", ""));
 	}
 
 	private void compensateScore(double time, Id<Person> agentId, double amount) {

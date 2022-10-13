@@ -105,13 +105,13 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		drtParams.setMonetaryDistanceRate(-0.00026);
 
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
-		drtConfigGroup.setMode(TransportMode.drt);
+		drtConfigGroup.mode = TransportMode.drt;
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBaseFare(1.0);
-		drtFareParams.setDailySubscriptionFee(10.0);
-		drtFareParams.setMinFarePerTrip(2.0);
-		drtFareParams.setDistanceFare_m(0.0002);
-		drtFareParams.setTimeFare_h(0.0003 * 3600);
+		drtFareParams.baseFare = 1.0;
+		drtFareParams.dailySubscriptionFee = 10.0;
+		drtFareParams.minFarePerTrip = 2.0;
+		drtFareParams.distanceFare_m = 0.0002;
+		drtFareParams.timeFare_h = 0.0003 * 3600;
 		drtConfigGroup.addParameterSet(drtFareParams);
 		MultiModeDrtConfigGroup multiModeDrtConfigGroup = ConfigUtils.addOrGetModule(config,
 				MultiModeDrtConfigGroup.class);
@@ -405,19 +405,19 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		drtParams.setMonetaryDistanceRate(-0.00026);
 
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
-		drtConfigGroup.setMode(TransportMode.drt);
+		drtConfigGroup.mode = TransportMode.drt;
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBaseFare(1.0);
-		drtFareParams.setDailySubscriptionFee(10.0);
-		drtFareParams.setMinFarePerTrip(2.0);
-		drtFareParams.setDistanceFare_m(0.0002);
-		drtFareParams.setTimeFare_h(0.0003 * 3600);
+		drtFareParams.baseFare = 1.0;
+		drtFareParams.dailySubscriptionFee = 10.0;
+		drtFareParams.minFarePerTrip = 2.0;
+		drtFareParams.distanceFare_m = 0.0002;
+		drtFareParams.timeFare_h = 0.0003 * 3600;
 		drtConfigGroup.addParameterSet(drtFareParams);
 		// Make DrtConfigGroup.checkConsistency happy
-		drtConfigGroup.setMaxWaitTime(900);
-		drtConfigGroup.setStopDuration(60);
-		drtConfigGroup.setMaxTravelTimeAlpha(1.3);
-		drtConfigGroup.setMaxTravelTimeBeta(300);
+		drtConfigGroup.maxWaitTime = 900;
+		drtConfigGroup.stopDuration = 60;
+		drtConfigGroup.maxTravelTimeAlpha = 1.3;
+		drtConfigGroup.maxTravelTimeBeta = 300;
 		drtConfigGroup.addDrtInsertionSearchParams(new ExtensiveInsertionSearchParams());
 
 		MultiModeDrtConfigGroup multiModeDrtConfigGroup = ConfigUtils.addOrGetModule(config,
@@ -499,13 +499,13 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		drtParams.setMonetaryDistanceRate(-0.00026);
 
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
-		drtConfigGroup.setMode(TransportMode.drt);
+		drtConfigGroup.mode = TransportMode.drt;
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.setBaseFare(1.0);
-		drtFareParams.setDailySubscriptionFee(10.0);
-		drtFareParams.setMinFarePerTrip(2.0);
-		drtFareParams.setDistanceFare_m(0.0002);
-		drtFareParams.setTimeFare_h(0.0003 * 3600);
+		drtFareParams.baseFare = 1.0;
+		drtFareParams.dailySubscriptionFee = 10.0;
+		drtFareParams.minFarePerTrip = 2.0;
+		drtFareParams.distanceFare_m = 0.0002;
+		drtFareParams.timeFare_h = 0.0003 * 3600;
 		drtConfigGroup.addParameterSet(drtFareParams);
 		MultiModeDrtConfigGroup multiModeDrtConfigGroup = ConfigUtils.addOrGetModule(config,
 				MultiModeDrtConfigGroup.class);
