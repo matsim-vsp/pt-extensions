@@ -24,7 +24,7 @@
 		<!-- <matsim.version>12.0</matsim.version> -->
 
 		<!-- smapshot release -->
-		<matsim.version>15.0-PR2233</matsim.version>
+		<matsim.version>15.0-PR2254</matsim.version>
 
 		<!-- weekly release -->
 		<!--<matsim.version>13.0-2021w05-SNAPSHOT</matsim.version>-->
