@@ -42,15 +42,12 @@ import java.util.Random;
  */
 public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAccessEgress {
 
-	public static final String MARGINAL_UTILITY_OF_MONEY_PERSONAL_FACTOR_ATTRIBUTE_NAME = "marginalUtilityOfMoneyPersonalFactor";
 	private static final Logger log = LogManager.getLogger(EnhancedRaptorIntermodalAccessEgress.class);
 	private final ScoringParametersForPerson parametersForPerson;
 	Config config;
 	PtExtensionsConfigGroup ptExtensionsCfg;
 	MultiModeDrtConfigGroup multiModeDrtConfigGroup;
 	IntermodalTripFareCompensatorsConfigGroup interModalTripFareCompensatorsCfg;
-	boolean hasNotShownIsUsingMarginalUtilityOfMoneyFromPersonAttributeYet = true;
-
 	// for randomization per person, per mode, per direction (but same random value for one combination of this per routing request)
 	Id<Person> lastPersonId = Id.createPersonId("");
 	RaptorStopFinder.Direction lastDirection = RaptorStopFinder.Direction.EGRESS;
@@ -72,23 +69,7 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
     public RIntermodalAccessEgress calcIntermodalAccessEgress( final List<? extends PlanElement> legs, RaptorParameters params, Person person,
                                                                RaptorStopFinder.Direction direction) {
 		// maybe nicer using raptor parameters per person ?
-		ScoringParameters scoringParams;
-		double marginalUtilityOfMoney;
-
-		scoringParams = this.parametersForPerson.getScoringParameters(person);
-		try {
-			Object attr = person.getAttributes().getAttribute(MARGINAL_UTILITY_OF_MONEY_PERSONAL_FACTOR_ATTRIBUTE_NAME);
-			marginalUtilityOfMoney = attr == null ?
-					scoringParams.marginalUtilityOfMoney : scoringParams.marginalUtilityOfMoney * Double.parseDouble(attr.toString());
-			if (hasNotShownIsUsingMarginalUtilityOfMoneyFromPersonAttributeYet) {
-				log.warn("Using person specific marginal utility of money from person attribute " +
-						MARGINAL_UTILITY_OF_MONEY_PERSONAL_FACTOR_ATTRIBUTE_NAME +
-						" (multiplied with marginalUtilityOfMoney found in ScoringParameters).");
-				hasNotShownIsUsingMarginalUtilityOfMoneyFromPersonAttributeYet = false;
-			}
-		} catch (Exception e) {
-			marginalUtilityOfMoney = scoringParams.marginalUtilityOfMoney;
-		}
+		ScoringParameters scoringParams = this.parametersForPerson.getScoringParameters(person);
 		
         double utility = 0.0;
         double tTime = 0.0;
@@ -104,12 +85,12 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
 							.get(mode)
 							.marginalUtilityOfTraveling_s + (-1) * scoringParams.marginalUtilityOfPerforming_s);
 				}
-				Double distance = ((Leg)pe).getRoute().getDistance();
+				double distance = ((Leg)pe).getRoute().getDistance();
 				if (distance != 0.) {
 					utility += distance * scoringParams.modeParams.get(mode).marginalUtilityOfDistance_m;
 					utility += distance
 							* scoringParams.modeParams.get(mode).monetaryDistanceCostRate
-							* marginalUtilityOfMoney;
+							* scoringParams.marginalUtilityOfMoney;
 				}
 				utility += scoringParams.modeParams.get(mode).constant;
 
@@ -131,7 +112,7 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
 
 						fare += drtFareParams.baseFare;
 						fare = Math.max(fare, drtFareParams.minFarePerTrip);
-						utility += -1. * fare * marginalUtilityOfMoney;
+						utility += -1. * fare * scoringParams.marginalUtilityOfMoney;
 					}
                 }
                 
@@ -139,12 +120,12 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
                 for (IntermodalTripFareCompensatorConfigGroup compensatorCfg : interModalTripFareCompensatorsCfg.getIntermodalTripFareCompensatorConfigGroups()) {
                 	if (compensatorCfg.getNonPtModes().contains(mode) && compensatorCfg.getPtModes().contains(TransportMode.pt)) {
                 		// the following is a compensation, thus positive!
-                		utility += compensatorCfg.getCompensationMoneyPerTrip() * marginalUtilityOfMoney;
+                		utility += compensatorCfg.getCompensationMoneyPerTrip() * scoringParams.marginalUtilityOfMoney;
 						utility += compensatorCfg.getCompensationScorePerTrip();
                 	}
                 }
 
-                //check whether the same agente was already handled for the same direction (for each trip it should always first handle all access stops and then all egress stops)
+                //check whether the same agent was already handled for the same direction (for each trip it should always first handle all access stops and then all egress stops)
                 // assumes that the RaptorStopFinder handles by person, then by direction, then by mode for each routing request (what DefaultRaptorStopFinder does)
                 // -> same person, same direction should be all in one row without other agents in between (otherwise will not work as expected)
                 if(!(lastPersonId.equals(person.getId()) && lastDirection.equals(direction))) {
