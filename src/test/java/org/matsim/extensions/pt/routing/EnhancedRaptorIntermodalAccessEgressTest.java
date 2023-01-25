@@ -47,6 +47,7 @@ import org.matsim.core.config.groups.PlanCalcScoreConfigGroup;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
 import org.matsim.core.controler.*;
 import org.matsim.core.controler.corelisteners.ControlerDefaultCoreListenersModule;
+import org.matsim.core.population.PersonUtils;
 import org.matsim.core.population.PopulationUtils;
 import org.matsim.core.population.routes.GenericRouteImpl;
 import org.matsim.core.scenario.ScenarioByInstanceModule;
@@ -57,8 +58,6 @@ import playground.vsp.scoring.IncomeDependentUtilityOfMoneyPersonScoringParamete
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static playground.vsp.scoring.IncomeDependentUtilityOfMoneyPersonScoringParameters.PERSONAL_INCOME_ATTRIBUTE_NAME;
 
 /**
  * @author vsp-gleich
@@ -368,7 +367,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		Population pop = scenario.getPopulation();
 		PopulationFactory f = pop.getFactory();
 		Person person = f.createPerson(Id.createPersonId("personSubpopulationNull"));
-		person.getAttributes().putAttribute(PERSONAL_INCOME_ATTRIBUTE_NAME, 2000.0);
+		PersonUtils.setIncome(person, 2000.0);
 		pop.addPerson(person);
 		Plan plan = f.createPlan();
 		Activity homeAct = f.createActivityFromCoord("home", new Coord(1,1));
@@ -376,7 +375,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		person.addPlan(plan);
 
 		Person dummyPerson = f.createPerson(Id.createPersonId("personWithHighIncome"));
-		dummyPerson.getAttributes().putAttribute(PERSONAL_INCOME_ATTRIBUTE_NAME, 6000.0);
+		PersonUtils.setIncome(dummyPerson, 6000.0);
 		pop.addPerson(dummyPerson);
 		Plan dummyPlan = f.createPlan();
 		Activity homeAct2 = f.createActivityFromCoord("home", new Coord(1,1));

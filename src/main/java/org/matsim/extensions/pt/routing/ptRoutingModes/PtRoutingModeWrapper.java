@@ -20,11 +20,9 @@
 package org.matsim.extensions.pt.routing.ptRoutingModes;
 
 import com.google.common.collect.ImmutableList;
-import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.router.RoutingModule;
 import org.matsim.core.router.RoutingRequest;
-import org.matsim.facilities.Facility;
 import org.matsim.extensions.pt.routing.ptRoutingModes.PtIntermodalRoutingModesConfigGroup.PersonAttribute2ValuePair;
 import org.matsim.extensions.pt.routing.ptRoutingModes.PtIntermodalRoutingModesConfigGroup.PtIntermodalRoutingModeParameterSet;
 
