@@ -109,30 +109,19 @@ public class TransitStopTagger {
                     // and https://developers.google.com/transit/gtfs/reference/#routestxt
                     // In GTFS-VBB-20181214.zip some RE lines are wrongly attributed as type 700 (bus)!
 
-                    case 0 -> gtfsTransitMode = "Tram, Light Rail, Streetcar";
-                    case 1 -> gtfsTransitMode = "Subway, Metro";
-                    case 2 -> gtfsTransitMode = "Rail";
-                    case 3 -> gtfsTransitMode = "Bus";
-                    case 4 -> gtfsTransitMode = "Ferry";
-                    case 5 -> gtfsTransitMode = "Cable Car";
-                    case 6 -> gtfsTransitMode = "Gondola, Suspended cable car";
-                    case 7 -> gtfsTransitMode = "Funicular";
+                    case 0, 900, 901, 902, 903, 904, 905, 906 -> gtfsTransitMode = "Tram, Light Rail, Streetcar";
+                    case 1, 400, 401, 402, 403, 404, 405 -> gtfsTransitMode = "Subway, Metro";
+                    case 2, 100, 101, 102, 103, 104, 105, 106, 107, 108 -> gtfsTransitMode = "Rail";
+                    case 3, 700, 701, 702, 703, 704 -> gtfsTransitMode = "Bus";
+                    case 4, 1000, 1200 -> gtfsTransitMode = "Ferry";
+                    case 5, 1701 -> gtfsTransitMode = "Cable Car";
+                    case 6, 1300 -> gtfsTransitMode = "Gondola, Suspended cable car";
+                    case 7, 1400 -> gtfsTransitMode = "Funicular";
                     case 11 -> gtfsTransitMode = "Trolleybus";
                     case 12 -> gtfsTransitMode = "Monorail";
-
-
-                    // new codes
-                    case 100 -> gtfsTransitMode = "Rail";
                     case 109 -> // VBB gtfs
                             gtfsTransitMode = "S-Bahn";
-                    case 400 -> gtfsTransitMode = "Subway, Metro";
-                    case 700 -> gtfsTransitMode = "Bus";
-                    case 900 -> gtfsTransitMode = "Tram, Light Rail, Streetcar";
-                    case 1000 -> gtfsTransitMode = "Ferry";
-                    case 1300 -> gtfsTransitMode = "Gondola, Suspended cable car";
-                    case 1400 -> gtfsTransitMode = "Funicular";
-                    case 1701 -> gtfsTransitMode = "Cable Car";
-                    default -> {
+                        default -> {
                         log.error("unknown gtfs mode type! Line id was " + line.getId().toString() +
                                 "; gtfs route type was " + line.getAttributes().getAttribute("gtfs_route_type"));
                         throw new RuntimeException("unknown transit mode");
