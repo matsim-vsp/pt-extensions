@@ -21,10 +21,7 @@
 
 	<properties>
 		<!-- release -->
-		<!-- <matsim.version>12.0</matsim.version> -->
-
-		<!-- smapshot release -->
-		<matsim.version>15.0</matsim.version>
+		<matsim.version>2024.0</matsim.version>
 
 		<!-- weekly release -->
 		<!--<matsim.version>13.0-2021w05-SNAPSHOT</matsim.version>-->
@@ -82,13 +79,13 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.10.1</version>
+			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>5.10.1</version>
+			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

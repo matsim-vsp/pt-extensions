@@ -20,8 +20,9 @@ package org.matsim.extensions.pt.mainModeIdentifier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Rule;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.PlanElement;
@@ -41,9 +42,10 @@ import java.util.List;
 public class SimpleTripChainAnalysisModeIdentifierTest {
 	private static final Logger log = LogManager.getLogger( SimpleTripChainAnalysisModeIdentifierTest.class ) ;
 	
-	@Rule public MatsimTestUtils utils = new MatsimTestUtils() ;
+	@RegisterExtension
+	public MatsimTestUtils utils = new MatsimTestUtils() ;
 	
-	@org.junit.Test
+	@Test
 	public final void testSingleModeTrips() {
 		log.info("Running test0...");
 
@@ -61,15 +63,14 @@ public class SimpleTripChainAnalysisModeIdentifierTest {
 			planElements.add(factory.createLeg(TransportMode.pt));
 			planElements.add(factory.createActivityFromLinkId(PtConstants.TRANSIT_ACTIVITY_TYPE, null));
 			planElements.add(factory.createLeg(TransportMode.non_network_walk));
-			Assert.assertEquals("Wrong mode!",
-					TransportMode.non_network_walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.non_network_walk,
-					mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.non_network_walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.non_network_walk,
+					mainModeIdentifier.identifyMainMode(planElements), "Wrong mode!");
 		}
 		
 		{
 			List<PlanElement> planElements = new ArrayList<>();
 			planElements.add(factory.createLeg(TransportMode.car));
-			Assert.assertEquals("Wrong mode!", TransportMode.car, mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.car, mainModeIdentifier.identifyMainMode(planElements), "Wrong mode!");
 		}
 		
 		{
@@ -79,15 +80,15 @@ public class SimpleTripChainAnalysisModeIdentifierTest {
 			planElements.add(factory.createLeg(TransportMode.drt));
 			planElements.add(factory.createActivityFromLinkId("drt interaction", null));
 			planElements.add(factory.createLeg(TransportMode.non_network_walk));
-			Assert.assertEquals("Wrong mode!",
-					TransportMode.non_network_walk + "-" + TransportMode.drt + "-" + TransportMode.non_network_walk,
-					mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.non_network_walk + "-" + TransportMode.drt + "-" + TransportMode.non_network_walk,
+					mainModeIdentifier.identifyMainMode(planElements),
+					"Wrong mode!");
 		}
 		
 		log.info("Running test0... Done.");
 	}
 	
-	@org.junit.Test
+	@Test
 	public final void testIntermodalPtDrtTrip() {
 		log.info("Running testIntermodalPtDrtTrip...");
 
@@ -109,9 +110,9 @@ public class SimpleTripChainAnalysisModeIdentifierTest {
 			planElements.add(factory.createLeg(TransportMode.pt));
 			planElements.add(factory.createActivityFromLinkId(PtConstants.TRANSIT_ACTIVITY_TYPE, null));
 			planElements.add(factory.createLeg(TransportMode.non_network_walk));
-			Assert.assertEquals("Wrong mode!",
-					TransportMode.non_network_walk + "-" + TransportMode.drt + "-" + TransportMode.non_network_walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.non_network_walk,
-					mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.non_network_walk + "-" + TransportMode.drt + "-" + TransportMode.non_network_walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.non_network_walk,
+					mainModeIdentifier.identifyMainMode(planElements),
+					"Wrong mode!");
 		}
 		
 		{
@@ -127,9 +128,9 @@ public class SimpleTripChainAnalysisModeIdentifierTest {
 			planElements.add(factory.createLeg(TransportMode.pt));
 			planElements.add(factory.createActivityFromLinkId(PtConstants.TRANSIT_ACTIVITY_TYPE, null));
 			planElements.add(factory.createLeg(TransportMode.non_network_walk));
-			Assert.assertEquals("Wrong mode!",
-					TransportMode.non_network_walk + "-" + "drt2" + "-" + TransportMode.non_network_walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.non_network_walk,
-					mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.non_network_walk + "-" + "drt2" + "-" + TransportMode.non_network_walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.non_network_walk,
+					mainModeIdentifier.identifyMainMode(planElements),
+					"Wrong mode!");
 		}
 		
 		{
@@ -149,15 +150,15 @@ public class SimpleTripChainAnalysisModeIdentifierTest {
 			planElements.add(factory.createLeg("drt2"));
 			planElements.add(factory.createActivityFromLinkId("drt2 interaction", null));
 			planElements.add(factory.createLeg(TransportMode.non_network_walk));
-			Assert.assertEquals("Wrong mode!",
-					TransportMode.non_network_walk + "-" + TransportMode.drt + "-" + TransportMode.non_network_walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.non_network_walk + "-" + "drt2" + "-" + TransportMode.non_network_walk,
-					mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.non_network_walk + "-" + TransportMode.drt + "-" + TransportMode.non_network_walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.non_network_walk + "-" + "drt2" + "-" + TransportMode.non_network_walk,
+					mainModeIdentifier.identifyMainMode(planElements),
+					"Wrong mode!");
 		}
 		
 		log.info("Running testIntermodalPtDrtTrip... Done.");
 	}
 	
-	@org.junit.Test
+	@Test
 	public final void testIntermodalPtDrtTripWithWalk() {
 		log.info("Running testIntermodalPtDrtTrip...");
 
@@ -179,8 +180,9 @@ public class SimpleTripChainAnalysisModeIdentifierTest {
 			planElements.add(factory.createLeg(TransportMode.pt));
 			planElements.add(factory.createActivityFromLinkId(PtConstants.TRANSIT_ACTIVITY_TYPE, null));
 			planElements.add(factory.createLeg(TransportMode.walk));
-			Assert.assertEquals("Wrong mode!", TransportMode.walk + "-" + TransportMode.drt + "-" + TransportMode.walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.walk,
-					mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.walk + "-" + TransportMode.drt + "-" + TransportMode.walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.walk,
+					mainModeIdentifier.identifyMainMode(planElements),
+					"Wrong mode!");
 		}
 		
 		{
@@ -196,8 +198,9 @@ public class SimpleTripChainAnalysisModeIdentifierTest {
 			planElements.add(factory.createLeg(TransportMode.pt));
 			planElements.add(factory.createActivityFromLinkId(PtConstants.TRANSIT_ACTIVITY_TYPE, null));
 			planElements.add(factory.createLeg(TransportMode.walk));
-			Assert.assertEquals("Wrong mode!", TransportMode.walk + "-" + "drt2" + "-" + TransportMode.walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.walk,
-					mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.walk + "-" + "drt2" + "-" + TransportMode.walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.walk,
+					mainModeIdentifier.identifyMainMode(planElements),
+					"Wrong mode!");
 		}
 		
 		{
@@ -217,8 +220,9 @@ public class SimpleTripChainAnalysisModeIdentifierTest {
 			planElements.add(factory.createLeg("drt2"));
 			planElements.add(factory.createActivityFromLinkId("drt2 interaction", null));
 			planElements.add(factory.createLeg(TransportMode.walk));
-			Assert.assertEquals("Wrong mode!", TransportMode.walk + "-" + TransportMode.drt + "-" + TransportMode.walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.walk + "-" + "drt2" + "-" + TransportMode.walk,
-					mainModeIdentifier.identifyMainMode(planElements));
+			Assertions.assertEquals(TransportMode.walk + "-" + TransportMode.drt + "-" + TransportMode.walk + "-" + TransportMode.pt + "-" + TransportMode.pt + "-" + TransportMode.walk + "-" + "drt2" + "-" + TransportMode.walk,
+					mainModeIdentifier.identifyMainMode(planElements),
+					"Wrong mode!");
 		}
 		
 		log.info("Running testIntermodalPtDrtTrip... Done.");

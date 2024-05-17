@@ -23,7 +23,8 @@
 package org.matsim.extensions.pt.fare.intermodalTripFareCompensator;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.TransportMode;
@@ -111,8 +112,8 @@ public class IntermodalTripFareCompensatorPerTripTest {
         events.processEvent(new PersonDepartureEvent(0.0, personId1, Id.createLinkId("12"), TransportMode.drt, routingMode));
         events.processEvent(new ActivityStartEvent(1.0, personId1, Id.createLinkId("23"), Id.create("dummy", ActivityFacility.class), "work", dummyCoord));
         events.flush();
-        Assert.assertNull("Compensation money should be 0, but is not!", person2Fare.get(personId1));
-        Assert.assertNull("Compensation should be 0, but is not!", person2Score.get(personId1));
+        Assertions.assertNull(person2Fare.get(personId1), "Compensation money should be 0, but is not!");
+        Assertions.assertNull(person2Score.get(personId1), "Compensation should be 0, but is not!");
         
         // test intermodal trip without drt mode (only unrelated other mode)
         events.processEvent(new PersonDepartureEvent(2.0, personId1, Id.createLinkId("23"), TransportMode.car, routingMode));
@@ -120,24 +121,24 @@ public class IntermodalTripFareCompensatorPerTripTest {
         
         // there should be no compensation so far
         events.flush();
-        Assert.assertNull("Compensation money should be 0, but is not!", person2Fare.get(personId1));
-        Assert.assertNull("Compensation score should be 0, but is not!", person2Score.get(personId1));
+        Assertions.assertNull(person2Fare.get(personId1), "Compensation money should be 0, but is not!");
+        Assertions.assertNull(person2Score.get(personId1), "Compensation score should be 0, but is not!");
 
         // test drt after pt leg
         events.processEvent(new PersonDepartureEvent(4.0, personId1, Id.createLinkId("45"), TransportMode.drt, routingMode));
         
         // compensation paid once
         events.flush();
-        Assert.assertEquals("After a pt and a drt leg compensation money should be paid once, but is not", 1 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON);
-        Assert.assertEquals("After a pt and a drt leg compensation score should be paid once, but is not", 1 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON);
+        Assertions.assertEquals(1 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON, "After a pt and a drt leg compensation money should be paid once, but is not");
+        Assertions.assertEquals(1 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON, "After a pt and a drt leg compensation score should be paid once, but is not");
 
         // some distraction, nothing should change
         events.processEvent(new PersonDepartureEvent(4.0, personId1, Id.createLinkId("45"), TransportMode.pt, routingMode));
 		
 	    // compensation paid once
         events.flush();
-        Assert.assertEquals("After a pt and a drt leg compensation money should be paid once, but is not", 1 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON);
-        Assert.assertEquals("After a pt and a drt leg compensation score should be paid once, but is not", 1 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON);
+        Assertions.assertEquals(1 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON, "After a pt and a drt leg compensation money should be paid once, but is not");
+        Assertions.assertEquals(1 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON, "After a pt and a drt leg compensation score should be paid once, but is not");
 
 		
 		// end trip
@@ -150,21 +151,21 @@ public class IntermodalTripFareCompensatorPerTripTest {
         
         // compensation paid second time (second trip)
         events.flush();
-        Assert.assertEquals("After a drt2 and a pt leg compensation money should be paid a 2nd time, but is not", 2 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON);
-        Assert.assertEquals("After a drt2 and a pt leg compensation score should be paid a 2nd time, but is not", 2 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON);
+        Assertions.assertEquals(2 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON, "After a drt2 and a pt leg compensation money should be paid a 2nd time, but is not");
+        Assertions.assertEquals(2 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON, "After a drt2 and a pt leg compensation score should be paid a 2nd time, but is not");
 
         // some distraction, nothing should change
         events.processEvent(new PersonDepartureEvent(4.0, personId1, Id.createLinkId("45"), TransportMode.pt, routingMode));
         events.flush();
-        Assert.assertEquals("After a drt2 and a pt leg compensation money should be paid a 2nd time, but is not", 2 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON);
-        Assert.assertEquals("After a drt2 and a pt leg compensation score should be paid a 2nd time, but is not", 2 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON);
+        Assertions.assertEquals(2 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON, "After a drt2 and a pt leg compensation money should be paid a 2nd time, but is not");
+        Assertions.assertEquals(2 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON, "After a drt2 and a pt leg compensation score should be paid a 2nd time, but is not");
 
         events.processEvent(new PersonDepartureEvent(4.0, personId1, Id.createLinkId("67"), TransportMode.drt, routingMode));
         
         // compensation paid third time (second trip)
         events.flush();
-        Assert.assertEquals("After another drt leg compensation money should be paid a 3nd time, but is not", 3 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON);
-        Assert.assertEquals("After another drt leg compensation score should be paid a 3nd time, but is not", 3 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON);
+        Assertions.assertEquals(3 * compensationMoneyPerTrip, person2Fare.get(personId1), MatsimTestUtils.EPSILON, "After another drt leg compensation money should be paid a 3nd time, but is not");
+        Assertions.assertEquals(3 * compensationScorePerTrip, person2Score.get(personId1), MatsimTestUtils.EPSILON, "After another drt leg compensation score should be paid a 3nd time, but is not");
 
         Id<Person> personId2 = Id.createPersonId("p2");
         // test drt before pt with interaction activity in between at other agent who did not use pt before
@@ -172,8 +173,8 @@ public class IntermodalTripFareCompensatorPerTripTest {
         events.processEvent(new ActivityStartEvent(7.0, personId2, Id.createLinkId("56"), Id.create("dummy", ActivityFacility.class), "drt interaction", dummyCoord));
         events.processEvent(new PersonDepartureEvent(8.0, personId2, Id.createLinkId("56"), TransportMode.pt, routingMode));
         events.flush();
-        Assert.assertEquals("After a pt and a drt leg compensation money should be paid once, but is not", 1 * compensationMoneyPerTrip, person2Fare.get(personId2), MatsimTestUtils.EPSILON);
-        Assert.assertEquals("After a pt and a drt leg compensation score should be paid once, but is not", 1 * compensationScorePerTrip, person2Score.get(personId2), MatsimTestUtils.EPSILON);
+        Assertions.assertEquals(1 * compensationMoneyPerTrip, person2Fare.get(personId2), MatsimTestUtils.EPSILON, "After a pt and a drt leg compensation money should be paid once, but is not");
+        Assertions.assertEquals(1 * compensationScorePerTrip, person2Score.get(personId2), MatsimTestUtils.EPSILON, "After a pt and a drt leg compensation score should be paid once, but is not");
 
     }
 

@@ -22,9 +22,9 @@
 
 package org.matsim.extensions.pt.replanning.singleTripStrategies;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
@@ -52,7 +52,7 @@ import org.matsim.testcases.MatsimTestUtils;
 
 public class RandomSingleTripPlanRouterTest {
 
-    @Rule
+    @RegisterExtension
     public MatsimTestUtils utils = new MatsimTestUtils();
     
     @Test
@@ -68,7 +68,7 @@ public class RandomSingleTripPlanRouterTest {
                 install(new TripRouterModule());
 				install(new TimeInterpretationModule());
                 install(new ScenarioByInstanceModule(scenario));
-                addTravelTimeBinding("car").toInstance(new FreespeedTravelTimeAndDisutility(config.planCalcScore()));
+                addTravelTimeBinding("car").toInstance(new FreespeedTravelTimeAndDisutility(config.scoring()));
                 addTravelDisutilityFactoryBinding("car").toInstance(new OnlyTimeDependentTravelDisutilityFactory());
             }
         });
@@ -108,8 +108,8 @@ public class RandomSingleTripPlanRouterTest {
         		}
         	}
         }
-		Assert.assertEquals("Number of car trips should not change.", carTripsBefore, carTripsAfterPlanRouter);		
-		Assert.assertEquals("Should only re-route a single trip. There should only be a single trip for which the route is not null.", 1, tripsWithRouteAfterSingleTripPlanRouter);		
+		Assertions.assertEquals(carTripsBefore, carTripsAfterPlanRouter, "Number of car trips should not change.");
+		Assertions.assertEquals(1, tripsWithRouteAfterSingleTripPlanRouter, "Should only re-route a single trip. There should only be a single trip for which the route is not null.");
     }
 
 }
