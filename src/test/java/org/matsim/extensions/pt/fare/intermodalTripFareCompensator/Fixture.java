@@ -29,10 +29,10 @@ import org.matsim.api.core.v01.network.Node;
 import org.matsim.api.core.v01.population.*;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
-import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ActivityParams;
-import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
-import org.matsim.core.config.groups.PlansCalcRouteConfigGroup.ModeRoutingParams;
-import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
+import org.matsim.core.config.groups.ScoringConfigGroup.ActivityParams;
+import org.matsim.core.config.groups.ScoringConfigGroup.ModeParams;
+import org.matsim.core.config.groups.RoutingConfigGroup.ModeRoutingParams;
+import org.matsim.core.config.groups.ReplanningConfigGroup.StrategySettings;
 import org.matsim.core.population.PopulationUtils;
 import org.matsim.core.population.routes.GenericRouteImpl;
 import org.matsim.core.replanning.strategies.DefaultPlanStrategiesModule.DefaultSelector;
@@ -64,50 +64,50 @@ class Fixture {
 		StrategySettings stratSets = new StrategySettings();
 		stratSets.setStrategyName(DefaultSelector.KeepLastSelected);
 		stratSets.setWeight(1.0);
-		config.strategy().addStrategySettings(stratSets);
+		config.replanning().addStrategySettings(stratSets);
 		
 		ActivityParams actParamsHome = new ActivityParams("home");
 		actParamsHome.setTypicalDuration(1.0 * 3600);
-		config.planCalcScore().addActivityParams(actParamsHome);
+		config.scoring().addActivityParams(actParamsHome);
 		
 		ActivityParams actParamsWork = new ActivityParams("work");
 		actParamsWork.setTypicalDuration(1.0 * 3600);
-		config.planCalcScore().addActivityParams(actParamsWork);
+		config.scoring().addActivityParams(actParamsWork);
 		
 		ActivityParams actParamsPtInteraction = new ActivityParams("pt interaction");
 		actParamsPtInteraction.setTypicalDuration(0.0);
 		actParamsPtInteraction.setScoringThisActivityAtAll(false);
-		config.planCalcScore().addActivityParams(actParamsPtInteraction);
+		config.scoring().addActivityParams(actParamsPtInteraction);
 		
 		ActivityParams actParamsDrtInteraction = new ActivityParams("drt interaction");
 		actParamsDrtInteraction.setTypicalDuration(0.0);
 		actParamsDrtInteraction.setScoringThisActivityAtAll(false);
-		config.planCalcScore().addActivityParams(actParamsDrtInteraction);
+		config.scoring().addActivityParams(actParamsDrtInteraction);
 		
 		// install (teleported dummy) modes
 		ModeRoutingParams walkModeRoutingParams = new ModeRoutingParams(TransportMode.walk);
 		walkModeRoutingParams.setBeelineDistanceFactor(1.0);
 		walkModeRoutingParams.setTeleportedModeSpeed(5.0);
-		config.plansCalcRoute().addModeRoutingParams(walkModeRoutingParams);
+		config.routing().addModeRoutingParams(walkModeRoutingParams);
 		
 		ModeRoutingParams ptModeRoutingParams = new ModeRoutingParams(TransportMode.pt);
 		ptModeRoutingParams.setBeelineDistanceFactor(1.0);
 		ptModeRoutingParams.setTeleportedModeSpeed(5.0);
-		config.plansCalcRoute().addModeRoutingParams(ptModeRoutingParams);
+		config.routing().addModeRoutingParams(ptModeRoutingParams);
 		
 		ModeRoutingParams drtModeRoutingParams = new ModeRoutingParams(TransportMode.drt);
 		drtModeRoutingParams.setBeelineDistanceFactor(1.0);
 		drtModeRoutingParams.setTeleportedModeSpeed(5.0);
-		config.plansCalcRoute().addModeRoutingParams(drtModeRoutingParams);
+		config.routing().addModeRoutingParams(drtModeRoutingParams);
 		
 		ModeParams walkModeParams = new ModeParams(TransportMode.walk);
-		config.planCalcScore().addModeParams(walkModeParams);
+		config.scoring().addModeParams(walkModeParams);
 		
 		ModeParams ptModeParams = new ModeParams(TransportMode.pt);
-		config.planCalcScore().addModeParams(ptModeParams);
+		config.scoring().addModeParams(ptModeParams);
 		
 		ModeParams drtModeParams = new ModeParams(TransportMode.drt);
-		config.planCalcScore().addModeParams(drtModeParams);
+		config.scoring().addModeParams(drtModeParams);
 	}
 
 	private void buildAndAddNetwork(Scenario scenario) {

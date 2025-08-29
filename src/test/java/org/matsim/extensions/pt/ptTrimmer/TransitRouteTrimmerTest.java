@@ -1,8 +1,8 @@
 package org.matsim.extensions.pt.ptTrimmer;
 
 import javafx.util.Pair;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TransitRouteTrimmerTest {
 
@@ -86,8 +86,8 @@ public class TransitRouteTrimmerTest {
             }
         }
 
-        assertEquals("There should be no stops outside of zone", 0, stopsOutsideZoneCnt);
-        assertEquals("All stops should be inside the zone", stopsTotal, stopsInZoneCnt);
+        assertEquals(0, stopsOutsideZoneCnt, "There should be no stops outside of zone");
+        assertEquals(stopsTotal, stopsInZoneCnt, "All stops should be inside the zone");
     }
 
     /**
@@ -110,8 +110,8 @@ public class TransitRouteTrimmerTest {
         Id<TransitStopFacility> firstStopId = transitRoute.getStops().get(0).getStopFacility().getId();
         Id<TransitStopFacility> lastStopId = transitRoute.getStops().get(sizeOld - 1).getStopFacility().getId();
 
-        assertNotEquals("The Route should not be entirely inside of the zone", sizeOld, inCnt);
-        assertNotEquals("The Route should not be entirely outside of the zone", sizeOld, outCnt);
+        assertNotEquals(sizeOld, inCnt, "The Route should not be entirely inside of the zone");
+        assertNotEquals(sizeOld, outCnt, "The Route should not be entirely outside of the zone");
         assertFalse(stopsInZone.contains(firstStopId));
         assertTrue(stopsInZone.contains(lastStopId));
 
@@ -137,8 +137,8 @@ public class TransitRouteTrimmerTest {
         Id<TransitStopFacility> firstStopId = transitRoute.getStops().get(0).getStopFacility().getId();
         Id<TransitStopFacility> lastStopId = transitRoute.getStops().get(sizeOld - 1).getStopFacility().getId();
 
-        assertNotEquals("The Route should not be entirely inside of the zone", sizeOld, inCnt);
-        assertNotEquals("The Route should not be entirely outside of the zone", sizeOld, outCnt);
+        assertNotEquals(sizeOld, inCnt, "The Route should not be entirely inside of the zone");
+        assertNotEquals(sizeOld, outCnt, "The Route should not be entirely outside of the zone");
         assertFalse(stopsInZone.contains(firstStopId));
         assertFalse(stopsInZone.contains(lastStopId));
 
@@ -170,16 +170,16 @@ public class TransitRouteTrimmerTest {
 
         // After Trim
         TransitSchedule transitScheduleNew = results.getKey();
-        assertTrue("Schedule should include empty transit line",
-                transitScheduleNew.getTransitLines().containsKey(transitLineId));
-        assertEquals("transitLine should no longer contain any routes",
-                transitScheduleNew.getTransitLines().get(transitLineId).getRoutes().size(), 0);
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "Schedule should include empty transit line");
+        assertEquals(0, transitScheduleNew.getTransitLines().get(transitLineId).getRoutes().size(),
+                "transitLine should no longer contain any routes");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
 
     }
 
@@ -210,23 +210,23 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("Schedule should include transit line",
-                transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "Schedule should include transit line");
 
         TransitLine transitLine = transitScheduleNew.getTransitLines().get(transitLineId);
-        assertTrue("Schedule should include transit route",
-                transitLine.getRoutes().containsKey(transitRouteId));
+        assertTrue(transitLine.getRoutes().containsKey(transitRouteId),
+                "Schedule should include transit route");
 
         TransitRoute transitRoute = transitLine.getRoutes().get(transitRouteId);
         int stopCntNew = transitRoute.getStops().size();
-        assertEquals("transitRoute should contain same number of stops as before modification",
-                stopCntOld, stopCntNew);
+        assertEquals(stopCntOld, stopCntNew,
+                "transitRoute should contain same number of stops as before modification");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
 
     }
 
@@ -257,23 +257,23 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("Schedule should include transit line",
-                transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "Schedule should include transit line");
 
         TransitLine transitLine = transitScheduleNew.getTransitLines().get(transitLineId);
-        assertTrue("Schedule should include transit route",
-                transitLine.getRoutes().containsKey(transitRouteId));
+        assertTrue(transitLine.getRoutes().containsKey(transitRouteId),
+                "Schedule should include transit route");
 
         TransitRoute transitRoute = transitLine.getRoutes().get(transitRouteId);
         int stopCntNew = transitRoute.getStops().size();
-        assertEquals("transitRoute should contain same number of stops as before modification",
-                stopCntOld, stopCntNew);
+        assertEquals(stopCntOld, stopCntNew,
+                "transitRoute should contain same number of stops as before modification");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
 
     }
 
@@ -298,16 +298,16 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("schedule should include empty transit line",
-                transitScheduleNew.getTransitLines().containsKey(transitLineId));
-        assertEquals("transitLine should no longer contain any routes",
-                transitScheduleNew.getTransitLines().get(transitLineId).getRoutes().size(), 0);
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "schedule should include empty transit line");
+        assertEquals(0, transitScheduleNew.getTransitLines().get(transitLineId).getRoutes().size(),
+                "transitLine should no longer contain any routes");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
 
     }
 
@@ -349,22 +349,22 @@ public class TransitRouteTrimmerTest {
         Id<TransitStopFacility> firstStopNew = transitRouteNew.getStops().get(0).getStopFacility().getId();
         Id<TransitStopFacility> lastStopNew = transitRouteNew.getStops().get(sizeNew - 1).getStopFacility().getId();
 
-        Assert.assertTrue("modified route should have less stops as original route",
-                sizeOld > sizeNew);
-        assertEquals("there should be no stops within the zone",
-                0, inCntNew);
-        assertEquals("number of stops outside of zone should remain same",
-                outCntOld, outCntNew);
-        assertEquals("first stop of old and new route should be same",
-                firstStopOld, firstStopNew);
-        assertNotEquals("last stop of old and new route should be different",
-                lastStopOld, lastStopNew);
+        Assertions.assertTrue(sizeOld > sizeNew,
+                "modified route should have less stops as original route");
+        assertEquals(0, inCntNew,
+                "there should be no stops within the zone");
+        assertEquals(outCntOld, outCntNew,
+                "number of stops outside of zone should remain same");
+        assertEquals(firstStopOld, firstStopNew,
+                "first stop of old and new route should be same");
+        assertNotEquals(lastStopOld, lastStopNew,
+                "last stop of old and new route should be different");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
     }
 
     /**
@@ -399,18 +399,18 @@ public class TransitRouteTrimmerTest {
         int numStopsNew = routeNew.getStops().size();
         int numLinksNew = routeNew.getRoute().getLinkIds().size();
 
-        Assert.assertTrue("line should still exist",
-                transitScheduleNew.getTransitLines().containsKey(transitLineId));
-        Assert.assertEquals("new route should contain same number of stops as old one",
-                numStopsOld, numStopsNew);
-        Assert.assertEquals("new route should contain same number of links as old one",
-                numLinksOld, numLinksNew);
+        Assertions.assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
+        Assertions.assertEquals(numStopsOld, numStopsNew,
+                "new route should contain same number of stops as old one");
+        Assertions.assertEquals(numLinksOld, numLinksNew,
+                "new route should contain same number of links as old one");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
     }
 
 
@@ -434,14 +434,16 @@ public class TransitRouteTrimmerTest {
 
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
-        assertTrue("sched should include empty transit line", transitScheduleNew.getTransitLines().containsKey(transitLineId));
-        assertEquals("transitLine should not longer contain any routes", transitScheduleNew.getTransitLines().get(transitLineId).getRoutes().size(), 0);
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "sched should include empty transit line");
+        assertEquals(0, transitScheduleNew.getTransitLines().get(transitLineId).getRoutes().size(),
+                "transitLine should not longer contain any routes");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
 
     }
 
@@ -478,20 +480,20 @@ public class TransitRouteTrimmerTest {
         int outCntNew = countStopsOutsideZone(transitRouteNew, stopsInZone);
         int numLinksNew = transitRouteNew.getRoute().getLinkIds().size();
 
-        Assert.assertTrue("there should be less stops after the modification",
-                sizeOld > sizeNew);
-        assertTrue("new route should have less links than old route",
-                numLinksNew < numLinksOld);
-        assertEquals("there should only be one stop within the zone",
-                1, inCntNew);
-        assertEquals("the number of stops outside of zone should remain same",
-                outCntOld, outCntNew);
+        Assertions.assertTrue(sizeOld > sizeNew,
+                "there should be less stops after the modification");
+        assertTrue(numLinksNew < numLinksOld,
+                "new route should have less links than old route");
+        assertEquals(1, inCntNew,
+                "there should only be one stop within the zone");
+        assertEquals(outCntOld, outCntNew,
+                "the number of stops outside of zone should remain same");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
 
     }
 
@@ -528,21 +530,21 @@ public class TransitRouteTrimmerTest {
         int numLinksNew = transitRouteNew.getRoute().getLinkIds().size();
         int inCntNew = countStopsInZone(transitRouteNew, stopsInZone);
 
-        Assert.assertTrue("line should still exist",
-                transitScheduleNew.getTransitLines().containsKey(transitLineId));
-        Assert.assertNotEquals("new route should NOT contain same number of stops as old one",
-                numStopsOld, numStopsNew);
-        Assert.assertEquals("new route should contain same number of links as old one",
-                numLinksOld, numLinksNew);
-        Assert.assertEquals("new route should only have two stops within zone, one per zone entrance/exit",
-                2, inCntNew);
+        Assertions.assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
+        Assertions.assertNotEquals(numStopsOld, numStopsNew,
+                "new route should NOT contain same number of stops as old one");
+        Assertions.assertEquals(numLinksOld, numLinksNew,
+                "new route should contain same number of links as old one");
+        Assertions.assertEquals(2, inCntNew,
+                "new route should only have two stops within zone, one per zone entrance/exit");
 
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
     }
 
     /**
@@ -567,16 +569,16 @@ public class TransitRouteTrimmerTest {
 
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
-        assertTrue("schedule should include empty transit line",
-                transitScheduleNew.getTransitLines().containsKey(transitLineId));
-        assertEquals("transitLine should not longer contain any routes",
-                0, transitScheduleNew.getTransitLines().get(transitLineId).getRoutes().size());
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "schedule should include empty transit line");
+        assertEquals(0, transitScheduleNew.getTransitLines().get(transitLineId).getRoutes().size(),
+                "transitLine should not longer contain any routes");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
     }
 
     /**
@@ -615,18 +617,18 @@ public class TransitRouteTrimmerTest {
         int inCntNew = countStopsInZone(transitRouteNew, stopsInZone);
         int outCntNew = countStopsOutsideZone(transitRouteNew, stopsInZone);
 
-        assertTrue("new route should have less stops than old route",
-                sizeOld > sizeNew);
-        assertEquals("there should only be one stop within the zone",
-                1, inCntNew);
-        assertEquals("# of stops outside of zone should remain same",
-                outCntOld, outCntNew);
+        assertTrue(sizeOld > sizeNew,
+                "new route should have less stops than old route");
+        assertEquals(1, inCntNew,
+                "there should only be one stop within the zone");
+        assertEquals(outCntOld, outCntNew,
+                "# of stops outside of zone should remain same");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
     }
 
     /**
@@ -655,7 +657,8 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("line should still exist", transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
         TransitLine transitLineNew = transitScheduleNew.getTransitLines().get(transitLineId);
 
         assertTrue(transitLineNew.getRoutes().containsKey(Id.create("161---17326_700_22_split1", TransitRoute.class)));
@@ -674,14 +677,16 @@ public class TransitRouteTrimmerTest {
         int inCntNew1 = countStopsInZone(transitRouteNew1, stopsInZone);
         int inCntNew2 = countStopsInZone(transitRouteNew2, stopsInZone);
 
-        Assert.assertEquals("new route #1 should only have one stop within zone", 1, inCntNew1);
-        Assert.assertEquals("new route #2 should only have one stop within zone", 1, inCntNew2);
+        Assertions.assertEquals(1, inCntNew1,
+                "new route #1 should only have one stop within zone");
+        Assertions.assertEquals(1, inCntNew2,
+                "new route #2 should only have one stop within zone");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
 
     }
 
@@ -732,7 +737,8 @@ public class TransitRouteTrimmerTest {
 
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
-        assertTrue("line should still exist", transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
         TransitLine transitLineNew = transitScheduleNew.getTransitLines().get(transitLineId);
 
         assertTrue(transitLineNew.getRoutes().containsKey(Id.create("161---17326_700_22_split1", TransitRoute.class)));
@@ -751,14 +757,16 @@ public class TransitRouteTrimmerTest {
         int inCntNew1 = countStopsInZone(transitRouteNew1, stopsInZone);
         int inCntNew2 = countStopsInZone(transitRouteNew2, stopsInZone);
 
-        assertEquals("new route #1 should have three stop within zone", 3, inCntNew1);
-        assertEquals("new route #2 should have one stop within zone", 1, inCntNew2);
+        assertEquals(3, inCntNew1,
+                "new route #1 should have three stop within zone");
+        assertEquals(1, inCntNew2,
+                "new route #2 should have one stop within zone");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
     }
 
     /**
@@ -799,7 +807,8 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("line should still exist", transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
         TransitLine transitLineNew = transitScheduleNew.getTransitLines().get(transitLineId);
 
         assertTrue(transitLineNew.getRoutes().containsKey(Id.create("161---17326_700_22_split1", TransitRoute.class)));
@@ -819,23 +828,23 @@ public class TransitRouteTrimmerTest {
         int inCntNew2 = countStopsInZone(transitRouteNew2, stopsInZone);
 
 
-        assertEquals("new route #1 should have three stops within zone",
-                3, inCntNew1);
-        assertEquals("new route #2 should have four stops within zone",
-                4, inCntNew2);
+        assertEquals(3, inCntNew1,
+                "new route #1 should have three stops within zone");
+        assertEquals(4, inCntNew2,
+                "new route #2 should have four stops within zone");
         Id<TransitStopFacility> idRoute1 = transitRouteNew1.getStops().get(transitRouteNew1.getStops().size() - 1).getStopFacility().getId();
-        assertEquals("last stop of route #1 should be the left hub",
-                facIdLeft, idRoute1);
+        assertEquals(facIdLeft, idRoute1,
+                "last stop of route #1 should be the left hub");
 
         Id<TransitStopFacility> idRoute2 = transitRouteNew2.getStops().get(0).getStopFacility().getId();
-        assertEquals("first stop of route #2 should be the right hub",
-                facIdRight, idRoute2);
+        assertEquals(facIdRight, idRoute2,
+                "first stop of route #2 should be the right hub");
 
         // Test vehicles
         Set<Id<Vehicle>> vehiclesUsedInTransitSchedule = getVehiclesUsedInTransitSchedule(transitScheduleNew);
         Set<Id<Vehicle>> vehiclesInVehiclesNew = results.getValue().getVehicles().keySet();
-        Assert.assertTrue("TransitVehicles should contain all vehicles used in new TransitSchedule",
-                vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule));
+        Assertions.assertTrue(vehiclesInVehiclesNew.containsAll(vehiclesUsedInTransitSchedule),
+                "TransitVehicles should contain all vehicles used in new TransitSchedule");
     }
 
     /**
@@ -881,7 +890,8 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("line should still exist", transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
         TransitLine transitLineNew = transitScheduleNew.getTransitLines().get(transitLineId);
 
         assertTrue(transitLineNew.getRoutes().containsKey(Id.create("161---17326_700_22_split1", TransitRoute.class)));
@@ -900,8 +910,10 @@ public class TransitRouteTrimmerTest {
         int inCntNew1 = countStopsInZone(transitRouteNew1, stopsInZone);
         int inCntNew2 = countStopsInZone(transitRouteNew2, stopsInZone);
 
-        assertEquals("new route #1 should have five stop within zone", 5, inCntNew1);
-        assertEquals("new route #2 should have one stop within zone", 1, inCntNew2);
+        assertEquals(5, inCntNew1,
+                "new route #1 should have five stop within zone");
+        assertEquals(1, inCntNew2,
+                "new route #2 should have one stop within zone");
 
     }
 
@@ -937,7 +949,8 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("line should still exist", transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
         TransitLine transitLineNew = transitScheduleNew.getTransitLines().get(transitLineId);
 
         assertTrue(transitLineNew.getRoutes().containsKey(Id.create("161---17326_700_22_split1", TransitRoute.class)));
@@ -951,7 +964,8 @@ public class TransitRouteTrimmerTest {
         assertEquals(transitRouteOld.getStops().size(), transitRouteNew1.getStops().size());
 
         int inCntNew1 = countStopsInZone(transitRouteNew1, stopsInZone);
-        assertEquals("new route #1 should have 19 stops within zone", 19, inCntNew1);
+        assertEquals(19, inCntNew1,
+                "new route #1 should have 19 stops within zone");
 
 
     }
@@ -987,7 +1001,8 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("line should still exist", transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
         TransitLine transitLineNew = transitScheduleNew.getTransitLines().get(transitLineId);
 
         assertTrue(transitLineNew.getRoutes().containsKey(Id.create("161---17326_700_22_split1", TransitRoute.class)));
@@ -1003,7 +1018,8 @@ public class TransitRouteTrimmerTest {
 
         int inCntNew1 = countStopsInZone(routeNew1, stopsInZone);
 
-        assertEquals("new route #1 should have 19 stops within zone", 19, inCntNew1);
+        assertEquals(19, inCntNew1,
+                "new route #1 should have 19 stops within zone");
 
 
     }
@@ -1034,7 +1050,8 @@ public class TransitRouteTrimmerTest {
         // After trim
         TransitSchedule transitScheduleNew = results.getKey();
 
-        assertTrue("line should still exist", transitScheduleNew.getTransitLines().containsKey(transitLineId));
+        assertTrue(transitScheduleNew.getTransitLines().containsKey(transitLineId),
+                "line should still exist");
         TransitLine transitLineNew = transitScheduleNew.getTransitLines().get(transitLineId);
 
         assertTrue(transitLineNew.getRoutes().containsKey(Id.create("161---17326_700_22_split1", TransitRoute.class)));
@@ -1052,15 +1069,15 @@ public class TransitRouteTrimmerTest {
         TransitRouteStop routeNew1Start = transitRouteNew1.getStops().get(0);
         TransitRouteStop routeOld1Start = transitRouteOld.getStops().get(0);
 
-        Assert.assertEquals(0., routeNew1Start.getDepartureOffset().seconds(),0.);
-        Assert.assertEquals(0., routeNew1Start.getArrivalOffset().seconds(), 0.);
+        Assertions.assertEquals(0., routeNew1Start.getDepartureOffset().seconds(),0.);
+        Assertions.assertEquals(0., routeNew1Start.getArrivalOffset().seconds(), 0.);
 
         //End of first route
         TransitRouteStop routeNew1End = transitRouteNew1.getStops().get(routeNew1size - 1);
         TransitRouteStop routeOld1End = transitRouteOld.getStops().get(routeNew1size - 1);
 
-        Assert.assertEquals(routeOld1End.getDepartureOffset(), routeNew1End.getDepartureOffset());
-        Assert.assertEquals(routeOld1End.getArrivalOffset(), routeNew1End.getArrivalOffset());
+        Assertions.assertEquals(routeOld1End.getDepartureOffset(), routeNew1End.getDepartureOffset());
+        Assertions.assertEquals(routeOld1End.getArrivalOffset(), routeNew1End.getArrivalOffset());
 
         //Start of second route
         TransitRouteStop routeNew2Start = transitRouteNew2.getStops().get(0);
@@ -1068,44 +1085,44 @@ public class TransitRouteTrimmerTest {
         double deltaSeconds = routeOld2Start.getArrivalOffset().seconds();
 
 
-        Assert.assertEquals(0., routeNew2Start.getDepartureOffset().seconds(), 0.);
-        Assert.assertEquals(0., routeNew2Start.getArrivalOffset().seconds(), 0.);
+        Assertions.assertEquals(0., routeNew2Start.getDepartureOffset().seconds(), 0.);
+        Assertions.assertEquals(0., routeNew2Start.getArrivalOffset().seconds(), 0.);
 
 
         //End of second route
         TransitRouteStop routeNew2End = transitRouteNew2.getStops().get(routeNew2Size - 1);
         TransitRouteStop routeOld2End = transitRouteOld.getStops().get(routeOldSize - 1);
 
-        Assert.assertEquals(routeOld2End.getDepartureOffset().seconds() - deltaSeconds, routeNew2End.getDepartureOffset().seconds(), 0.);
-        Assert.assertEquals(routeOld2End.getArrivalOffset().seconds() - deltaSeconds, routeNew2End.getArrivalOffset().seconds(), 0.);
+        Assertions.assertEquals(routeOld2End.getDepartureOffset().seconds() - deltaSeconds, routeNew2End.getDepartureOffset().seconds(), 0.);
+        Assertions.assertEquals(routeOld2End.getArrivalOffset().seconds() - deltaSeconds, routeNew2End.getArrivalOffset().seconds(), 0.);
 
 
         // Check Departures
-        Assert.assertEquals(transitRouteOld.getDepartures().size(), transitRouteNew1.getDepartures().size());
-        Assert.assertEquals(transitRouteOld.getDepartures().size(), transitRouteNew2.getDepartures().size());
+        Assertions.assertEquals(transitRouteOld.getDepartures().size(), transitRouteNew1.getDepartures().size());
+        Assertions.assertEquals(transitRouteOld.getDepartures().size(), transitRouteNew2.getDepartures().size());
         for (Departure departureOld : transitRouteOld.getDepartures().values()) {
             Id<Departure> idOld = departureOld.getId();
             double departureTimeOld = departureOld.getDepartureTime();
             Id<Vehicle> vehicleIdOld = departureOld.getVehicleId();
             Id<Departure> idNew1 = Id.create(idOld.toString() + "_split1", Departure.class);
-            Assert.assertTrue(transitRouteNew1.getDepartures().containsKey(idNew1));
+            Assertions.assertTrue(transitRouteNew1.getDepartures().containsKey(idNew1));
             Departure departureNew1 = transitRouteNew1.getDepartures().get(idNew1);
-            Assert.assertEquals(vehicleIdOld.toString() + "_split1", departureNew1.getVehicleId().toString());
-            Assert.assertEquals(departureTimeOld, departureNew1.getDepartureTime(), 0.);
+            Assertions.assertEquals(vehicleIdOld.toString() + "_split1", departureNew1.getVehicleId().toString());
+            Assertions.assertEquals(departureTimeOld, departureNew1.getDepartureTime(), 0.);
 
             Id<Departure> idNew2 = Id.create(idOld.toString() + "_split2", Departure.class);
-            Assert.assertTrue(transitRouteNew2.getDepartures().containsKey(idNew2));
+            Assertions.assertTrue(transitRouteNew2.getDepartures().containsKey(idNew2));
             Departure departureNew2 = transitRouteNew2.getDepartures().get(idNew2);
-            Assert.assertEquals(vehicleIdOld.toString() + "_split2", departureNew2.getVehicleId().toString());
-            Assert.assertEquals(departureTimeOld + deltaSeconds, departureNew2.getDepartureTime(), 0.);
+            Assertions.assertEquals(vehicleIdOld.toString() + "_split2", departureNew2.getVehicleId().toString());
+            Assertions.assertEquals(departureTimeOld + deltaSeconds, departureNew2.getDepartureTime(), 0.);
 
         }
 
-        Assert.assertEquals("test123", transitRouteNew1.getDescription());
-        Assert.assertEquals("test123", transitRouteNew2.getDescription());
+        Assertions.assertEquals(transitRouteNew1.getDescription(), "test123");
+        Assertions.assertEquals(transitRouteNew2.getDescription(), "test123");
 
-        Assert.assertEquals(transitRouteOld.getTransportMode(), transitRouteNew1.getTransportMode());
-        Assert.assertEquals(transitRouteOld.getTransportMode(), transitRouteNew2.getTransportMode());
+        Assertions.assertEquals(transitRouteOld.getTransportMode(), transitRouteNew1.getTransportMode());
+        Assertions.assertEquals(transitRouteOld.getTransportMode(), transitRouteNew2.getTransportMode());
 
 
 //        transitScheduleNew.getAttributes();

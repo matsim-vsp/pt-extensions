@@ -22,9 +22,8 @@
 
 package org.matsim.extensions.pt.replanning.singleTripStrategies;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
@@ -52,8 +51,7 @@ import org.matsim.testcases.MatsimTestUtils;
 
 public class ChangeSingleTripModeAndRoutePlanRouterTest {
 
-    @Rule
-    public MatsimTestUtils utils = new MatsimTestUtils();
+    private MatsimTestUtils utils = new MatsimTestUtils();
     
     @Test
     public void test0() {
@@ -68,7 +66,7 @@ public class ChangeSingleTripModeAndRoutePlanRouterTest {
                 install(new TripRouterModule());
                 install(new TimeInterpretationModule());
                 install(new ScenarioByInstanceModule(scenario));
-                addTravelTimeBinding("car").toInstance(new FreespeedTravelTimeAndDisutility(config.planCalcScore()));
+                addTravelTimeBinding("car").toInstance(new FreespeedTravelTimeAndDisutility(config.scoring()));
                 addTravelDisutilityFactoryBinding("car").toInstance(new OnlyTimeDependentTravelDisutilityFactory());
             }
         });
@@ -104,7 +102,7 @@ public class ChangeSingleTripModeAndRoutePlanRouterTest {
         	}
         }
         
-		Assert.assertEquals("Should only choose new trip mode for a single trip. There should only be a single trip for which the trip mode is not car.", carTripsBefore-1, carTripsAfterPlanRouter);
+		Assertions.assertEquals(carTripsBefore-1, carTripsAfterPlanRouter, "Should only choose new trip mode for a single trip. There should only be a single trip for which the trip mode is not car.");
     }
 
 }

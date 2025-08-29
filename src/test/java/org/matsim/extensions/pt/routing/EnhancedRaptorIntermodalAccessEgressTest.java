@@ -25,11 +25,9 @@ import ch.sbb.matsim.routing.pt.raptor.RaptorStopFinder;
 import com.google.inject.Singleton;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
@@ -37,14 +35,16 @@ import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Node;
 import org.matsim.api.core.v01.population.*;
 import org.matsim.contrib.drt.fare.DrtFareParams;
+import org.matsim.contrib.drt.optimizer.constraints.DrtOptimizationConstraintsParams;
+import org.matsim.contrib.drt.optimizer.constraints.DrtOptimizationConstraintsSetImpl;
 import org.matsim.contrib.drt.optimizer.insertion.extensive.ExtensiveInsertionSearchParams;
 import org.matsim.contrib.drt.routing.DrtRoute;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
 import org.matsim.contrib.drt.run.MultiModeDrtConfigGroup;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
-import org.matsim.core.config.groups.PlanCalcScoreConfigGroup;
-import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
+import org.matsim.core.config.groups.ScoringConfigGroup;
+import org.matsim.core.config.groups.ScoringConfigGroup.ModeParams;
 import org.matsim.core.controler.*;
 import org.matsim.core.controler.corelisteners.ControlerDefaultCoreListenersModule;
 import org.matsim.core.population.PersonUtils;
@@ -63,11 +63,11 @@ import java.util.List;
  * @author vsp-gleich
  *
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EnhancedRaptorIntermodalAccessEgressTest {
 	private static final Logger log = LogManager.getLogger( EnhancedRaptorIntermodalAccessEgressTest.class ) ;
 	
-	@Rule public MatsimTestUtils utils = new MatsimTestUtils() ;
+	@RegisterExtension
+	public MatsimTestUtils utils = new MatsimTestUtils() ;
 
 	@Test
 	public final void testDrtAccess() {
@@ -75,15 +75,15 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		RaptorParameters params = null;
 
 		Config config = ConfigUtils.createConfig();
-		config.controler().setOutputDirectory(utils.getOutputDirectory());
-		config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
+		config.controller().setOutputDirectory(utils.getOutputDirectory());
+		config.controller().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 		Scenario scenario = ScenarioUtils.createScenario(config);
 		Population pop = scenario.getPopulation();
 		PopulationFactory f = pop.getFactory();
 		Person person = f.createPerson(Id.createPersonId("personSubpopulationNull"));
 
 		// daily constants / rates are ignored, but set them anyway (to see whether they are used by error)
-		PlanCalcScoreConfigGroup scoreCfg = config.planCalcScore();
+		ScoringConfigGroup scoreCfg = config.scoring();
 		scoreCfg.setMarginalUtilityOfMoney(1.0);
 		scoreCfg.setPerforming_utils_hr(0.00011 * 3600.0);
 		scoreCfg.setMarginalUtlOfWaitingPt_utils_hr(1d); // completely irrelevant, but avoids NullPointerExceptions
@@ -103,13 +103,13 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		drtParams.setMonetaryDistanceRate(-0.00026);
 
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
-		drtConfigGroup.mode = TransportMode.drt;
+		drtConfigGroup.setMode(TransportMode.drt);
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.baseFare = 1.0;
-		drtFareParams.dailySubscriptionFee = 10.0;
-		drtFareParams.minFarePerTrip = 2.0;
-		drtFareParams.distanceFare_m = 0.0002;
-		drtFareParams.timeFare_h = 0.0003 * 3600;
+		drtFareParams.setBaseFare(1.0);
+		drtFareParams.setDailySubscriptionFee(10.0);
+		drtFareParams.setMinFarePerTrip(2.0);
+		drtFareParams.setDistanceFare_m(0.0002);
+		drtFareParams.setTimeFare_h(0.0003 * 3600);
 		drtConfigGroup.addParameterSet(drtFareParams);
 		MultiModeDrtConfigGroup multiModeDrtConfigGroup = ConfigUtils.addOrGetModule(config,
 				MultiModeDrtConfigGroup.class);
@@ -160,7 +160,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		RIntermodalAccessEgress result = raptorIntermodalAccessEgress.calcIntermodalAccessEgress(legs, params, person, RaptorStopFinder.Direction.ACCESS );
 
 		//Asserts
-		Assert.assertEquals("Total travel time is wrong!", 1000.0, result.travelTime, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(1000.0, result.travelTime, MatsimTestUtils.EPSILON, "Total travel time is wrong!");
 
 		/*
 		 * disutility: -1 * ( ASC + distance + time + monetary distance rate + fare)
@@ -169,12 +169,12 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		 * drtLeg: -1 * (-2.1 -0.00024*5000 -(0.00025+0.00011)*600 -0.00026*5000 -max(2.0, 1+0.0002*5000+0.0003*600) ) = 6.996
 		 * walkLeg2: -1 * (-1.2 -0.00015*400 -(0.00016+0.00011)*300 -0.00017*400 -0 ) = 1.409
 		 */
-		Assert.assertEquals("Total disutility is wrong!", 9.696, result.disutility, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(9.696, result.disutility, MatsimTestUtils.EPSILON, "Total disutility is wrong!");
 
 		for (int i = 0; i < legs.size(); i++) {
-			Assert.assertEquals("Input legs != output legs!", legs.get(i), result.routeParts.get(i));
+			Assertions.assertEquals(legs.get(i), result.routeParts.get(i), "Input legs != output legs!");
 		}
-		Assert.assertEquals("Input legs != output legs!", legs.size(), result.routeParts.size());
+		Assertions.assertEquals(legs.size(), result.routeParts.size(), "Input legs != output legs!");
 	}
 	
 	@Test
@@ -183,15 +183,15 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		RaptorParameters params = null;
 
 		Config config = ConfigUtils.createConfig();
-		config.controler().setOutputDirectory(utils.getOutputDirectory());
-		config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
+		config.controller().setOutputDirectory(utils.getOutputDirectory());
+		config.controller().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 		Scenario scenario = ScenarioUtils.createScenario(config);
 		Population pop = scenario.getPopulation();
 		PopulationFactory f = pop.getFactory();
 		Person person = f.createPerson(Id.createPersonId("personSubpopulationNull"));
 
 		// daily constants / rates are ignored, but set them anyway (to see whether they are used by error)
-		PlanCalcScoreConfigGroup scoreCfg = config.planCalcScore();
+		ScoringConfigGroup scoreCfg = config.scoring();
 		scoreCfg.setMarginalUtilityOfMoney(1.0);
 		scoreCfg.setPerforming_utils_hr(0.00011 * 3600.0);
 		scoreCfg.setMarginalUtlOfWaitingPt_utils_hr(1d); // completely irrelevant, but avoids NullPointerExceptions
@@ -232,19 +232,19 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		RIntermodalAccessEgress result = raptorIntermodalAccessEgress.calcIntermodalAccessEgress(legs, params, person, RaptorStopFinder.Direction.ACCESS );
 
 		//Asserts
-		Assert.assertEquals("Total travel time is wrong!", 100.0, result.travelTime, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(100.0, result.travelTime, MatsimTestUtils.EPSILON, "Total travel time is wrong!");
 
 		/*
 		 * disutility: -1 * ( ASC + distance + time + monetary distance rate + fare)
 		 *
 		 * walkLeg1: -1 * (-1.2 -0.00015*200 -(0.00016+0.00011)*100 -0.00017*200 -0 ) = 1.291
 		 */
-		Assert.assertEquals("Total disutility is wrong!", 1.291, result.disutility, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(1.291, result.disutility, MatsimTestUtils.EPSILON, "Total disutility is wrong!");
 
 		for (int i = 0; i < legs.size(); i++) {
-			Assert.assertEquals("Input legs != output legs!", legs.get(i), result.routeParts.get(i));
+			Assertions.assertEquals(legs.get(i), result.routeParts.get(i), "Input legs != output legs!");
 		}
-		Assert.assertEquals("Input legs != output legs!", legs.size(), result.routeParts.size());
+		Assertions.assertEquals(legs.size(), result.routeParts.size(), "Input legs != output legs!");
 	}
 	
 	@Test
@@ -253,8 +253,8 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		RaptorParameters params = null;
 		
 		Config config = ConfigUtils.createConfig();
-		config.controler().setOutputDirectory(utils.getOutputDirectory());
-		config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
+		config.controller().setOutputDirectory(utils.getOutputDirectory());
+		config.controller().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 		Scenario scenario = ScenarioUtils.createScenario(config);
 		Population pop = scenario.getPopulation();
 		PopulationFactory f = pop.getFactory();
@@ -267,7 +267,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		pop.addPerson(personSubpopulationNull);
 
 		// daily constants / rates are ignored, but set them anyway (to see whether they are used by error)
-		PlanCalcScoreConfigGroup.ScoringParameterSet scoreCfg = config.planCalcScore().getOrCreateScoringParameters(subpopulationName);
+		ScoringConfigGroup.ScoringParameterSet scoreCfg = config.scoring().getOrCreateScoringParameters(subpopulationName);
 		scoreCfg.setMarginalUtilityOfMoney(1.0);
 		scoreCfg.setMarginalUtlOfWaitingPt_utils_hr(1d); // not sure
 		scoreCfg.setPerforming_utils_hr(0.00011 * 3600.0);
@@ -281,8 +281,8 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 
 
 		// set other values for subpopulation null to check that they are not used by error
-		PlanCalcScoreConfigGroup.ScoringParameterSet scoreCfgNullParams = config.planCalcScore().getOrCreateScoringParameters(null); // is this really necessary
-		PlanCalcScoreConfigGroup scoreCfgNull = config.planCalcScore();
+		ScoringConfigGroup.ScoringParameterSet scoreCfgNullParams = config.scoring().getOrCreateScoringParameters(null); // is this really necessary
+		ScoringConfigGroup scoreCfgNull = config.scoring();
 		scoreCfgNull.setMarginalUtilityOfMoney(1.0);
 		scoreCfgNull.setPerforming_utils_hr(0.0002 * 3600.0);
 		scoreCfgNull.setMarginalUtlOfWaitingPt_utils_hr(1d); // not sure
@@ -320,38 +320,38 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		RIntermodalAccessEgress result = raptorIntermodalAccessEgress.calcIntermodalAccessEgress(legs, params, person, RaptorStopFinder.Direction.ACCESS );
 		
 		//Asserts
-		Assert.assertEquals("Total travel time is wrong!", 100.0, result.travelTime, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(100.0, result.travelTime, MatsimTestUtils.EPSILON, "Total travel time is wrong!");
 		
 		/* 
 		 * disutility: -1 * ( ASC + distance + time + monetary distance rate + fare)
 		 * 
 		 * walkLeg1: -1 * (-1.2 -0.00015*200 -(0.00016+0.00011)*100 -0.00017*200 -0 ) = 1.291
 		 */
-		Assert.assertEquals("Total disutility is wrong!", 1.291, result.disutility, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(1.291, result.disutility, MatsimTestUtils.EPSILON, "Total disutility is wrong!");
 
 		for (int i = 0; i < legs.size(); i++) {
-			Assert.assertEquals("Input legs != output legs!", legs.get(i), result.routeParts.get(i));
+			Assertions.assertEquals(legs.get(i), result.routeParts.get(i), "Input legs != output legs!");
 		}
-		Assert.assertEquals("Input legs != output legs!", legs.size(), result.routeParts.size());
+		Assertions.assertEquals(legs.size(), result.routeParts.size(), "Input legs != output legs!");
 		
 		// Agent in subpopulation null
 		RIntermodalAccessEgress resultSubpopulationNull = raptorIntermodalAccessEgress.calcIntermodalAccessEgress(legs, params,
 				personSubpopulationNull, RaptorStopFinder.Direction.ACCESS );
 		
 		//Asserts
-		Assert.assertEquals("Total travel time is wrong!", 100.0, resultSubpopulationNull.travelTime, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(100.0, resultSubpopulationNull.travelTime, MatsimTestUtils.EPSILON, "Total travel time is wrong!");
 		
 		/* 
 		 * disutility: -1 * ( ASC + distance + time + monetary distance rate + fare)
 		 * 
 		 * walkLeg1: -1 * (-100 -0*200 -(0.0002)*100 -0.0*200 -0 ) = 100.02
 		 */
-		Assert.assertEquals("Total disutility is wrong!", 100.02, resultSubpopulationNull.disutility, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(100.02, resultSubpopulationNull.disutility, MatsimTestUtils.EPSILON, "Total disutility is wrong!");
 
 		for (int i = 0; i < legs.size(); i++) {
-			Assert.assertEquals("Input legs != output legs!", legs.get(i), resultSubpopulationNull.routeParts.get(i));
+			Assertions.assertEquals(legs.get(i), resultSubpopulationNull.routeParts.get(i), "Input legs != output legs!");
 		}
-		Assert.assertEquals("Input legs != output legs!", legs.size(), resultSubpopulationNull.routeParts.size());
+		Assertions.assertEquals(legs.size(), resultSubpopulationNull.routeParts.size(), "Input legs != output legs!");
 	}
 
 	@Test
@@ -360,9 +360,9 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		RaptorParameters params = null;
 
 		Config config = ConfigUtils.createConfig();
-		config.controler().setOutputDirectory(utils.getOutputDirectory());
-		config.controler().setLastIteration(0);
-		config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
+		config.controller().setOutputDirectory(utils.getOutputDirectory());
+		config.controller().setLastIteration(0);
+		config.controller().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 		Scenario scenario = ScenarioUtils.createScenario(config);
 		Population pop = scenario.getPopulation();
 		PopulationFactory f = pop.getFactory();
@@ -390,7 +390,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		scenario.getNetwork().addLink(scenario.getNetwork().getFactory().createLink(Id.createLinkId("2-1"), node2, node1));
 
 		// daily constants / rates are ignored, but set them anyway (to see whether they are used by error)
-		PlanCalcScoreConfigGroup scoreCfg = config.planCalcScore();
+		ScoringConfigGroup scoreCfg = config.scoring();
 		scoreCfg.setMarginalUtilityOfMoney(1.0);
 		scoreCfg.setPerforming_utils_hr(0.00011 * 3600.0);
 		scoreCfg.setMarginalUtlOfWaitingPt_utils_hr(1d); // completely irrelevant, but avoids NullPointerExceptions
@@ -403,19 +403,23 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		drtParams.setMonetaryDistanceRate(-0.00026);
 
 		DrtConfigGroup drtConfigGroup = new DrtConfigGroup();
-		drtConfigGroup.mode = TransportMode.drt;
+		drtConfigGroup.setMode(TransportMode.drt);
 		DrtFareParams drtFareParams = new DrtFareParams();
-		drtFareParams.baseFare = 1.0;
-		drtFareParams.dailySubscriptionFee = 10.0;
-		drtFareParams.minFarePerTrip = 2.0;
-		drtFareParams.distanceFare_m = 0.0002;
-		drtFareParams.timeFare_h = 0.0003 * 3600;
+		drtFareParams.setBaseFare(1.0);
+		drtFareParams.setDailySubscriptionFee(10.0);
+		drtFareParams.setMinFarePerTrip(2.0);
+		drtFareParams.setDistanceFare_m(0.0002);
+		drtFareParams.setTimeFare_h(0.0003 * 3600);
+
 		drtConfigGroup.addParameterSet(drtFareParams);
-		// Make DrtConfigGroup.checkConsistency happy
-		drtConfigGroup.maxWaitTime = 900;
-		drtConfigGroup.stopDuration = 60;
-		drtConfigGroup.maxTravelTimeAlpha = 1.3;
-		drtConfigGroup.maxTravelTimeBeta = 300;
+		drtConfigGroup.setStopDuration(60);
+
+		DrtOptimizationConstraintsParams constraints = drtConfigGroup.addOrGetDrtOptimizationConstraintsParams();
+		DrtOptimizationConstraintsSetImpl d = constraints.addOrGetDefaultDrtOptimizationConstraintsSet();
+		d.maxWaitTime = 900;
+		d.maxTravelTimeAlpha = 1.3;
+		d.maxTravelTimeBeta = 300;
+
 		drtConfigGroup.addDrtInsertionSearchParams(new ExtensiveInsertionSearchParams());
 
 		MultiModeDrtConfigGroup multiModeDrtConfigGroup = ConfigUtils.addOrGetModule(config,
@@ -452,7 +456,7 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		RIntermodalAccessEgress result = raptorIntermodalAccessEgress.calcIntermodalAccessEgress(legs, params, person, RaptorStopFinder.Direction.ACCESS );
 
 		//Asserts
-		Assert.assertEquals("Total travel time is wrong!", 600.0, result.travelTime, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(600.0, result.travelTime, MatsimTestUtils.EPSILON, "Total travel time is wrong!");
 
 		/*
 		 * disutility: -1 * ( ASC + distance + time + monetary distance rate + fare)
@@ -461,12 +465,12 @@ public class EnhancedRaptorIntermodalAccessEgressTest {
 		 *
 		 * drtLeg: -1 * (-2.1 -0.00024*5000 -(0.00025+0.00011)*600 +2.0*(-0.00026*5000 -max(2.0, 1+0.0002*5000+0.0003*600)) ) = 10.476
 		 */
-		Assert.assertEquals("Total disutility is wrong!", 10.476, result.disutility, MatsimTestUtils.EPSILON);
+		Assertions.assertEquals(10.476, result.disutility, MatsimTestUtils.EPSILON, "Total disutility is wrong!");
 
 		for (int i = 0; i < legs.size(); i++) {
-			Assert.assertEquals("Input legs != output legs!", legs.get(i), result.routeParts.get(i));
+			Assertions.assertEquals(legs.get(i), result.routeParts.get(i), "Input legs != output legs!");
 		}
-		Assert.assertEquals("Input legs != output legs!", legs.size(), result.routeParts.size());
+		Assertions.assertEquals(legs.size(), result.routeParts.size(), "Input legs != output legs!");
 	}
 
 }

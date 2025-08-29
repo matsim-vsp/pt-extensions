@@ -19,6 +19,8 @@
 
 package org.matsim.extensions.pt.replanning.singleTripStrategies;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.core.config.groups.GlobalConfigGroup;
@@ -29,15 +31,14 @@ import org.matsim.core.router.TripRouter;
 import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.facilities.ActivityFacilities;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class RandomSingleTripReRoute implements Provider<PlanStrategy> {
 
 	@Inject private GlobalConfigGroup globalConfigGroup;
 	@Inject private ActivityFacilities facilities;
 	@Inject private Provider<TripRouter> tripRouterProvider;
-	@Inject private TimeInterpretation timeInterpretation;
+	@Inject
+	private TimeInterpretation timeInterpretation;
 
 	@Override
 	public PlanStrategy get() {

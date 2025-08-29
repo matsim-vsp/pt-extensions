@@ -102,16 +102,16 @@ public class EnhancedRaptorIntermodalAccessEgress implements RaptorIntermodalAcc
 						DrtFareParams drtFareParams = drtConfig.getDrtFareParams().get();
 						double fare = 0.;
 						if (distance != 0.) {
-							fare += drtFareParams.distanceFare_m * distance;
+							fare += drtFareParams.getDistanceFare_m() * distance;
 						}
 
 						if (travelTime.isDefined()) {
-							fare += drtFareParams.timeFare_h * travelTime.seconds() / 3600.;
+							fare += drtFareParams.getTimeFare_h() * travelTime.seconds() / 3600.;
 
 						}
 
-						fare += drtFareParams.baseFare;
-						fare = Math.max(fare, drtFareParams.minFarePerTrip);
+						fare += drtFareParams.getBaseFare();
+						fare = Math.max(fare, drtFareParams.getMinFarePerTrip());
 						utility += -1. * fare * scoringParams.marginalUtilityOfMoney;
 					}
                 }

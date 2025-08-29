@@ -20,8 +20,7 @@
 
 package org.matsim.extensions.pt.replanning.singleTripStrategies;
 
-import javax.inject.Provider;
-
+import jakarta.inject.Provider;
 import org.matsim.core.config.groups.GlobalConfigGroup;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.gbl.MatsimRandom;
