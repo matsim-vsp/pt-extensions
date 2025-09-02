@@ -73,7 +73,7 @@ public class RaptorIntermodalAccessRandomizationTest {
     Id<Person> agent2Id = Id.createPersonId("weirdWalkTravelTimeSameAsRoutedAgent");
 
     @Test
-    @Disabled("After MATSim update, test fails at 247 expected: <walk> but was: <weirdWalk>")
+//    @Disabled("After MATSim update, test fails at 247 expected: <walk> but was: <weirdWalk>")
     public void accessModeWithDifferentTravelTimeThanRoutedTest() {
         Config config = ConfigUtils.createConfig();
         config.network().setInputFile(IOUtils.extendUrl(ExamplesUtils.getTestScenarioURL("pt-tutorial"), "multimodalnetwork.xml").toString());
@@ -86,7 +86,7 @@ public class RaptorIntermodalAccessRandomizationTest {
         config.controller().setWriteEventsInterval(1);
         config.controller().setWriteTripsInterval(1);
         config.scoring().setWriteExperiencedPlans(true);
-        config.controller().setLastIteration(50);
+        config.controller().setLastIteration(80);
         config.controller().setOutputDirectory(testUtils.getOutputDirectory());
 
         RoutingConfigGroup.ModeRoutingParams bikeRoutingParams = new RoutingConfigGroup.ModeRoutingParams(TransportMode.bike);

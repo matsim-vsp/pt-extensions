@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * ModeStatsControlerListener takes modes from scoreConfig.getAllModes() and ignores everything else.
- * So keep this in mind before using this class.
- *
  * @author vsp-gleich
  *
  */
